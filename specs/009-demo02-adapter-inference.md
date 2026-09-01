@@ -2,7 +2,7 @@
 
 ## Problem
 
-After Demo 01 saves a LoRA adapter, learners need a restartable way to load it with the local Qwen3-0.6B base model and ask unrestricted questions.
+After Demo 01 saves a LoRA adapter, learners need a restartable way to load it with the local Qwen3-1.7B base model and ask unrestricted questions.
 
 ## Scope
 
@@ -10,9 +10,9 @@ Create demo02/ with a notebook and usage guide. The notebook loads ignored local
 
 ## Requirements
 
-* Demo 01 must have saved its adapter under artifacts/training/demo01-qwen3-0.6b-lora/adapter/; the base model remains under artifacts/models/Qwen3-0.6B/.
+* Demo 01 must have saved its adapter under artifacts/training/demo01-qwen3-1.7b-lora/adapter/; the base model remains under artifacts/models/Qwen3-1.7B/.
 * Use AutoTokenizer and AutoModelForCausalLM for the base model and PeftModel.from_pretrained for the adapter, with local files only.
-* Validate base-model files, adapter_config.json, and adapter weights before loading.
+* Validate base-model configuration and tokenizer files, either a single Safetensors weight file or a complete indexed set of Safetensors shards, adapter_config.json, and adapter weights before loading.
 * Device selection follows specification 002. Confirm Qwen3, PEFT model, selected device, and evaluation mode.
 * Expose one editable USER_PROMPT. Any question is allowed; recommend English because the initial dataset is English.
 * Use the chat template with thinking disabled, torch.inference_mode(), and deterministic generation.
@@ -28,4 +28,3 @@ Create demo02/ with a notebook and usage guide. The notebook loads ignored local
 
 * Parse the notebook as version-4 JSON and assert code cells have no stored outputs.
 * Run it manually as an optional integration check after Demo 01 has created the adapter.
-

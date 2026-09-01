@@ -4,7 +4,7 @@ This document records hypotheses for improving the factual-recall fine-tuning de
 
 ## Current observation
 
-The Qwen3-0.6B LoRA adapter recalls curated facts well when questions are close to the training phrasing. It generalises poorly to substantially different, natural questions and can add unsupported details. This is expected from a very small model trained on a compact factual dataset; it does not indicate that the adapter failed to load.
+The Qwen3-1.7B LoRA adapter may recall curated facts well when questions are close to the training phrasing. It can generalise poorly to substantially different, natural questions and add unsupported details. This is a known risk for a model trained on a compact factual dataset; it does not indicate that the adapter failed to load.
 
 ## Hypothesis 1: Increase question diversity
 
@@ -19,20 +19,17 @@ For example, the academic fact should support questions such as:
 
 Evaluation must use previously unseen natural paraphrases and must measure both factual correctness and unsupported additions.
 
-## Hypothesis 2: Compare a moderately larger Qwen3 model
+## Hypothesis 2: Improve the Qwen3-1.7B training configuration
 
-Keep the dataset, LoRA configuration, training procedure, and evaluation questions constant, then compare the current 0.6B run with [Qwen/Qwen3-1.7B](https://huggingface.co/Qwen/Qwen3-1.7B).
-
-Qwen3-1.7B is the preferred next comparison because it stays in the same model family and offers a moderate capacity increase without immediately moving to the substantially heavier 4B model. Use the post-trained conversational model, not the Base variant, so that the existing chat-template workflow remains comparable.
+Keep the dataset and evaluation questions constant while testing carefully documented changes to the LoRA configuration and training procedure for [Qwen/Qwen3-1.7B](https://huggingface.co/Qwen/Qwen3-1.7B). Use the post-trained conversational model, not the Base variant, so that the existing chat-template workflow remains comparable.
 
 Suggested initial controls:
 
-* Use the same train/evaluation datasets as the 0.6B comparison.
 * Preserve the LoRA rank, alpha, dropout, learning rate, seed, and epoch count initially.
 * Consider reducing maximum sequence length from 512 to 256 because the factual Q&A records are short.
 * Compare the same targeted questions, including deliberately reworded and temporal questions.
 
-This experiment isolates the effect of model capacity. A larger model may improve semantic generalisation, but it cannot guarantee factual reliability or eliminate hallucinations.
+This experiment isolates the effect of the documented training change. It cannot guarantee factual reliability or eliminate hallucinations.
 
 ## Optional later comparison: Qwen3-4B
 

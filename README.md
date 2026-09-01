@@ -17,7 +17,7 @@ The project will guide you through a small, practical workflow:
 5. Evaluate the adapter and compare base-model versus adapted responses.
 6. Save, reload, and share the lightweight LoRA adapter—without duplicating the base model.
 
-The first implementation targets the deliberately small `Qwen/Qwen3-0.6B` model and a small dataset. This keeps the feedback loop short and makes the resource trade-offs understandable before you scale up.
+The first implementation targets the `Qwen/Qwen3-1.7B` model and a small dataset. This keeps the workflow inspectable while making the resource trade-offs visible.
 
 ## Why LoRA on a MacBook?
 
@@ -41,7 +41,7 @@ Local fine-tuning is constrained by unified memory, thermal limits, model size, 
 * Internet access for the initial Hugging Face model and dataset download
 * A Hugging Face account/token only if a future model or dataset requires authentication
 
-The selected model is [`Qwen/Qwen3-0.6B`](https://huggingface.co/Qwen/Qwen3-0.6B), a public Apache-2.0 Causal Language Model in Safetensors format. Its 0.6B parameter scale makes it the initial learning target, not a guarantee that every training configuration will suit every MacBook.
+The selected model is [`Qwen/Qwen3-1.7B`](https://huggingface.co/Qwen/Qwen3-1.7B), a public Apache-2.0 Causal Language Model in Safetensors format. Its parameter scale does not guarantee that every training configuration will suit every MacBook.
 
 ## Setup
 
@@ -64,7 +64,7 @@ Start the notebook environment when notebooks are added:
 jupyter lab
 ```
 
-## Download Qwen3-0.6B from Hugging Face Hub
+## Download Qwen3-1.7B from Hugging Face Hub
 
 The project uses the [`hf` command-line interface](https://huggingface.co/docs/huggingface_hub/guides/cli) supplied by `huggingface_hub`. The selected repository is public, so the following commands do not need a token.
 
@@ -72,49 +72,31 @@ From the repository root, activate the environment and download the complete mod
 
 ```bash
 conda activate llm-fine-tuning-on-mac
-hf download Qwen/Qwen3-0.6B \
-  --revision c1899de289a04d12100db370d81485cdf75e47ca \
-  --local-dir artifacts/models/Qwen3-0.6B
+hf download Qwen/Qwen3-1.7B \
+  --local-dir artifacts/models/Qwen3-1.7B
 ```
 
 The final command prints the local destination. `artifacts/` is excluded from Git, including the metadata cache created by the CLI, so base-model files cannot be committed by accident.
 
-To use a newer Hub revision later, do not replace the hash ad hoc: update the [model acquisition specification](specs/003-qwen3-0.6b-model-acquisition.md), record the new full commit hash, and rerun the command. For a private or gated future artifact, authenticate interactively with `hf auth login`; never paste a token into a command that is saved in shell history.
+For a future reproducible revision pin, update the [model acquisition specification](specs/003-qwen3-1.7b-model-acquisition.md), record the full commit hash, and rerun the command. For a private or gated future artifact, authenticate interactively with `hf auth login`; never paste a token into a command that is saved in shell history.
 
 ## Included demos
 
 ### Demo 00 — local inference
 
-[`demo00/`](demo00/) contains a restartable notebook that loads the downloaded Qwen3-0.6B model from `artifacts/`, verifies its Qwen configuration and selected MPS/CPU device, then generates an answer to an editable prompt. It is the quick local-health check before any training run.
+[`demo00/`](demo00/) contains a restartable notebook that loads the downloaded Qwen3-1.7B model from `artifacts/`, verifies its Qwen configuration and selected MPS/CPU device, then generates an answer to an editable prompt. It is the quick local-health check before any training run.
 
 ### Demo 01 — LoRA factual-recall fine-tuning
 
 [`demo01/`](demo01/) contains the end-to-end fine-tuning notebook. It loads an ignored, private Q&A dataset, validates its conversational schema and recall-evaluation contract, trains a PEFT/LoRA adapter on MPS when available, evaluates loss after every epoch, saves only adapter artifacts, and generates deterministic answers for held-out question paraphrases.
 
-The default experiment is intentionally small and inspectable: Qwen3-0.6B, a LoRA adapter with rank 8 and alpha 16, a learning rate of `1e-4`, and eight epochs. See the [Demo 01 guide](demo01/README.md) for how to run it.
+The default experiment uses Qwen3-1.7B, a LoRA adapter with rank 8 and alpha 16, a learning rate of `1e-4`, and eight epochs. See the [Demo 01 guide](demo01/README.md) for how to run it.
 
 ### Demo 02 — fine-tuned adapter inference
 
-[demo02/](demo02/) loads the local Qwen3-0.6B base model together with the LoRA adapter created by Demo 01. It provides an editable prompt for any question and recommends English questions, matching the language of the initial fine-tuning data. Use it as a manual behaviour check: strong recall on the curated facts does not guarantee reliable answers to arbitrary or substantially reworded questions.
+[demo02/](demo02/) loads the local Qwen3-1.7B base model together with the LoRA adapter created by Demo 01. It provides an editable prompt for any question and recommends English questions, matching the language of the initial fine-tuning data. Use it as a manual behaviour check: strong recall on the curated facts does not guarantee reliable answers to arbitrary or substantially reworded questions.
 
-Future hypotheses for improving factual recall and comparing a moderately larger model are recorded in [experiments/README.md](experiments/README.md).
-
-## Example local results
-
-The following is an eight-epoch Demo 01 run on a private CV-derived dataset. It is an illustrative local result, not a benchmark: the dataset, adapter, and evaluation records are intentionally private and are not part of this repository.
-
-| Epoch | Training loss | Evaluation loss |
-| ---: | ---: | ---: |
-| 1 | 1.5084 | 1.310615 |
-| 2 | 0.9688 | 0.898974 |
-| 3 | 0.6019 | 0.571389 |
-| 4 | 0.2984 | 0.291942 |
-| 5 | 0.1233 | 0.131696 |
-| 6 | 0.0557 | 0.064139 |
-| 7 | 0.0280 | 0.040271 |
-| 8 | 0.0144 | 0.026364 |
-
-Evaluation loss decreased at every epoch. The final deterministic recall evaluation achieved a 90.9% exact-match rate, a mean token F1 of 0.969, and 90.9% accuracy at token F1 ≥ 0.80. These figures show that the adapter can recall the curated facts under unseen question phrasings; they do not establish general-purpose factual reliability.
+Future hypotheses for improving factual recall are recorded in [experiments/README.md](experiments/README.md).
 
 ## Repository layout
 
@@ -154,7 +136,7 @@ Version ranges intentionally keep the initial project compatible with Qwen 3-era
 
 ## Status
 
-The project foundation, MPS execution contract, Qwen3-0.6B acquisition path, Demo 00 local-inference notebook, private parametric-memory dataset workflow, Demo 01 LoRA fine-tuning notebook, and Demo 02 adapter-inference notebook are in place.
+The project foundation, MPS execution contract, Qwen3-1.7B acquisition path, Demo 00 local-inference notebook, private parametric-memory dataset workflow, Demo 01 LoRA fine-tuning notebook, and Demo 02 adapter-inference notebook are in place.
 
 ## License
 

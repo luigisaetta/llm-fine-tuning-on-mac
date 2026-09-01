@@ -1,8 +1,8 @@
-# Demo 01: LoRA Fine-Tuning of Qwen3-0.6B
+# Demo 01: LoRA Fine-Tuning of Qwen3-1.7B
 
 ## Problem
 
-The project needs a reproducible, Mac-first notebook that fine-tunes the local Qwen3-0.6B model on the private parametric-memory datasets about Luigi Saetta and evaluates the result without treating the CV as inference-time context.
+The project needs a reproducible, Mac-first notebook that fine-tunes the local Qwen3-1.7B model on the private parametric-memory datasets about Luigi Saetta and evaluates the result without treating the CV as inference-time context.
 
 ## Scope
 
@@ -12,14 +12,14 @@ Create `demo01/` containing a restartable Jupyter notebook and concise usage doc
 
 | Setting | Value | Rationale |
 | --- | --- | --- |
-| Base model | Local `Qwen3-0.6B` | Selected project base model. |
+| Base model | Local `Qwen3-1.7B` | Model downloaded from `Qwen/Qwen3-1.7B`; this training specification does not pin its Hub revision. |
 | LoRA rank | 8 | Increases adapter capacity for this factual-recall experiment. |
 | LoRA alpha | 16 | Standard scaling of 2 × rank. |
 | LoRA dropout | 0.05 | Keeps regularisation while allowing more factual fitting. |
 | Target modules | Q/K/V/O attention and gate/up/down MLP projections | Adapts attention and feed-forward transformations. |
 | Learning rate | 1e-4 | Lower starting rate to reduce overfitting on the compact dataset. |
 | Epochs | 8 | Deliberate underfitting experiment; use per-epoch evaluation to select the best checkpoint. |
-| Micro-batch size | 1 | Reduces Apple unified-memory pressure. |
+| Micro-batch size | 1 | Reduces Apple unified-memory pressure; reduce sequence length or stop if local MPS memory is unsuitable. |
 | Gradient accumulation | 8 | Gives an effective batch size of 8. |
 | Maximum sequence length | 512 | More than sufficient for short factual Q&A while bounding memory. |
 | Precision | float32 | Conservative MPS baseline. |
@@ -41,7 +41,7 @@ Create `demo01/` containing a restartable Jupyter notebook and concise usage doc
 
 ## Acceptance criteria
 
-* The notebook validates local model and dataset paths before loading, including that every evaluation fact ID occurs in training and that train/evaluation question strings do not overlap.
+* The notebook validates local model and dataset paths before loading, including either a single Safetensors weight file or a complete indexed set of Safetensors shards; it also verifies that every evaluation fact ID occurs in training and that train/evaluation question strings do not overlap.
 * LoRA, learning rate, epochs, batch settings, and device policy appear together in one editable configuration cell.
 * Evaluation loss runs once per epoch.
 * The held-out generative metric uses only evaluation records and reports exact match, mean token F1, and threshold accuracy.

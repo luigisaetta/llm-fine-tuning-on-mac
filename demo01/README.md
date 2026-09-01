@@ -1,10 +1,10 @@
-# Demo 01: LoRA Fine-Tuning Qwen3-0.6B
+# Demo 01: LoRA Fine-Tuning Qwen3-1.7B
 
-This notebook fine-tunes the local Qwen3-0.6B model with a LoRA adapter on the private parametric-memory dataset about Luigi Saetta.
+This notebook fine-tunes the local Qwen3-1.7B model with a LoRA adapter on the private parametric-memory dataset about Luigi Saetta.
 
 ## Prerequisites
 
-* Complete [Demo 00](../demo00/README.md) and keep the base model under `artifacts/models/Qwen3-0.6B`.
+* Download [`Qwen/Qwen3-1.7B`](https://huggingface.co/Qwen/Qwen3-1.7B) and keep the base model under `artifacts/models/Qwen3-1.7B`.
 * Generate and validate the private files `artifacts/datasets/cv-qa/train.jsonl` and `artifacts/datasets/cv-qa/eval.jsonl`.
 * Use the `llm-fine-tuning-on-mac` Conda environment.
 

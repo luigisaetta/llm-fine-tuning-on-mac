@@ -1,16 +1,16 @@
-# Demo 00: Local Qwen3-0.6B Inference Specification
+# Demo 00: Local Qwen3-1.7B Inference Specification
 
 ## Problem
 
-Before fine-tuning, learners need a small, observable proof that the downloaded Qwen3-0.6B model, tokenizer, PyTorch device selection, and prompt-generation path work together on their MacBook.
+Before fine-tuning, learners need a small, observable proof that the downloaded Qwen3-1.7B model, tokenizer, PyTorch device selection, and prompt-generation path work together on their MacBook.
 
 ## Scope
 
-Create `demo00/` containing one restartable Jupyter notebook and concise usage documentation. The notebook loads the already-downloaded model from `artifacts/models/Qwen3-0.6B`, verifies the local artifacts and loaded model, then generates a response to an editable user prompt using Transformers.
+Create `demo00/` containing one restartable Jupyter notebook and concise usage documentation. The notebook loads the already-downloaded model from `artifacts/models/Qwen3-1.7B`, verifies the local artifacts and loaded model, then generates a response to an editable user prompt using Transformers.
 
 ## Assumptions
 
-* `Qwen/Qwen3-0.6B` has been downloaded at the pinned revision in specification 003.
+* `Qwen/Qwen3-1.7B` has been downloaded as described in specification 003.
 * The user starts JupyterLab from the repository root with the `llm-fine-tuning-on-mac` Conda environment selected as the kernel.
 * The required PyTorch and Transformers packages are installed from `requirements.txt`.
 * MPS device selection follows specification 002. `auto` selects MPS if usable; otherwise it reports CPU fallback.
@@ -18,8 +18,8 @@ Create `demo00/` containing one restartable Jupyter notebook and concise usage d
 ## Functional requirements
 
 * The notebook must use `AutoTokenizer` and `AutoModelForCausalLM` from `transformers`.
-* It must load only from `artifacts/models/Qwen3-0.6B` with `local_files_only=True`; it must not download from the Hub.
-* Before loading, it must check for `config.json`, `tokenizer.json`, and `model.safetensors`, producing an actionable error if any are missing.
+* It must load only from `artifacts/models/Qwen3-1.7B` with `local_files_only=True`; it must not download from the Hub.
+* Before loading, it must check for `config.json`, `tokenizer.json`, and either `model.safetensors` or a complete indexed set of Safetensors shards, producing an actionable error if required artifacts are missing.
 * It must print the selected device, PyTorch version, and MPS build/availability state.
 * It must validate that the loaded model has `model_type == "qwen3"`, is on the selected device type, is in evaluation mode, and display a successful-load summary.
 * It must provide one clearly marked editable `USER_PROMPT` variable and generate a response using the tokenizer chat template with thinking disabled for a concise first demo.

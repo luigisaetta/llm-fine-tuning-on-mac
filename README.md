@@ -28,7 +28,7 @@ Local fine-tuning is constrained by unified memory, thermal limits, model size, 
 ## Project principles
 
 * **Spec-driven:** every meaningful feature starts with a concise specification in [`specs/`](specs/).
-* **Mac-first:** Apple Silicon/MPS is preferred where supported; CPU fallback must be explicit.
+* **Mac-first:** PyTorch's Apple Silicon/MPS backend is preferred where supported; CPU fallback is explicit.
 * **Open and reproducible:** models come from Hugging Face Hub; configuration, seeds, and dataset assumptions are documented.
 * **Learn by inspecting:** notebooks explain the workflow, while scripts hold reusable implementation logic.
 * **Adapter-only outputs:** keep downloaded base weights, checkpoints, and caches out of Git.
@@ -77,6 +77,12 @@ jupyter lab
 ```
 
 The `notebooks/`, `src/`, and `tests/` directories will be introduced with the specifications that define their first behaviour.
+
+## Apple Silicon and MPS
+
+The project uses PyTorch's Metal Performance Shaders (MPS) backend to run eligible tensor operations on the Mac GPU. MPS is selected automatically when the installed PyTorch build and the active machine make it available; otherwise the workflow reports an explicit CPU fallback. A user who explicitly requests MPS receives a clear error if it is unavailable—never a hidden change of device.
+
+The complete device-selection and verification contract is defined in the [Apple Silicon MPS execution specification](specs/002-apple-silicon-mps-execution.md). It also explains why unsupported-operation fallback is opt-in and why each training run must record its precision and resource assumptions.
 
 ## Working spec-first
 

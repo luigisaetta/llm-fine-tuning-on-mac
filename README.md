@@ -144,10 +144,6 @@ Before adding a notebook, script, model, or dataset, read the relevant document 
 
 Version ranges intentionally keep the initial project compatible with Qwen 3-era Transformers releases while avoiding unreviewed major upgrades. Pin exact versions in a future training-run specification when strict experiment reproducibility is needed.
 
-## Data, models, and privacy
-
-Never commit Hugging Face tokens, private data, downloaded base models, adapter checkpoints, or training caches. Use public or properly licensed data, document its provenance, and remove personal or sensitive information before training. Keep secrets in environment variables or an ignored `.env` file.
-
 ## Status
 
 The project foundation, MPS execution contract, Qwen3-0.6B acquisition path, Demo 00 local-inference notebook, private parametric-memory dataset workflow, and Demo 01 LoRA fine-tuning notebook are in place.

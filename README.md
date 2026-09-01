@@ -1,2 +1,101 @@
-# llm-fine-tuning-on-mac
-This repo contains all the code to do the fine tuning with loRA of a small LLM
+# Fine-tune a Qwen 3 model on your Mac
+
+Turn a compact open-weight language model into a model that understands *your* task—without leaving your MacBook.
+
+This repository is a hands-on, spec-driven project for fine-tuning a small model from the [Qwen 3 family](https://huggingface.co/Qwen) with **LoRA** (Low-Rank Adaptation). It combines reproducible Python scripts with explorable Jupyter notebooks, so you can both understand each step and run the whole workflow again.
+
+> The aim is not merely to launch training. It is to make the decisions behind a reliable local fine-tuning workflow visible: data format, prompt template, memory limits, LoRA configuration, evaluation, and adapter-based inference.
+
+## What you will build
+
+The project will guide you through a small, practical workflow:
+
+1. Select and download an appropriate Qwen 3 open-weight model from the Hugging Face Hub.
+2. Inspect and validate an instruction-style dataset.
+3. Format examples, tokenize them, and configure LoRA adapters.
+4. Fine-tune locally, preferring Apple Silicon's MPS backend when it is available.
+5. Evaluate the adapter and compare base-model versus adapted responses.
+6. Save, reload, and share the lightweight LoRA adapter—without duplicating the base model.
+
+The first implementation will target a deliberately small model and dataset. This keeps the feedback loop short and makes the resource trade-offs understandable before you scale up.
+
+## Why LoRA on a MacBook?
+
+Full fine-tuning updates every model weight and quickly becomes impractical on a laptop. LoRA keeps the original Qwen weights frozen and learns a much smaller set of adapter weights. That makes experiments cheaper to store, easier to repeat, and more suitable for local hardware—while still allowing a model to specialize.
+
+Local fine-tuning is constrained by unified memory, thermal limits, model size, sequence length, and data quality. This repository treats those constraints as part of the design, rather than hiding them behind a one-line command.
+
+## Project principles
+
+* **Spec-driven:** every meaningful feature starts with a concise specification in [`specs/`](specs/).
+* **Mac-first:** Apple Silicon/MPS is preferred where supported; CPU fallback must be explicit.
+* **Open and reproducible:** models come from Hugging Face Hub; configuration, seeds, and dataset assumptions are documented.
+* **Learn by inspecting:** notebooks explain the workflow, while scripts hold reusable implementation logic.
+* **Adapter-only outputs:** keep downloaded base weights, checkpoints, and caches out of Git.
+
+## Prerequisites
+
+* macOS and Conda (or Miniconda)
+* The existing Conda environment named `llm-fine-tuning-on-mac`
+* Python compatible with the dependencies in `requirements.txt`
+* Internet access for the initial Hugging Face model and dataset download
+* A Hugging Face account/token only if the selected model or dataset requires authentication
+
+The eventual model selection will be documented with its exact Hugging Face identifier, revision, licence, and realistic hardware guidance. Do not assume that every Qwen 3 checkpoint will fit or train effectively on every MacBook.
+
+## Setup
+
+Activate the dedicated environment and install the project dependencies:
+
+```bash
+conda activate llm-fine-tuning-on-mac
+python -m pip install -r requirements.txt
+```
+
+Confirm the core packages are available:
+
+```bash
+python -c "import torch, transformers, peft, datasets; print(torch.__version__, transformers.__version__, peft.__version__, datasets.__version__)"
+```
+
+Start the notebook environment when notebooks are added:
+
+```bash
+jupyter lab
+```
+
+## Planned layout
+
+```text
+.
+├── specs/          # Behaviour, constraints, and acceptance criteria
+├── notebooks/      # Guided, restartable experiments
+├── src/            # Reusable training, data, and inference code
+├── tests/          # Fast tests with no model downloads
+├── requirements.txt
+└── README.md
+```
+
+The `notebooks/`, `src/`, and `tests/` directories will be introduced with the specifications that define their first behaviour.
+
+## Working spec-first
+
+Before adding a notebook, script, model, or dataset, read the relevant document in [`specs/`](specs/). A specification captures the problem, scope, assumptions, acceptance criteria, and how the work will be verified. The initial [project foundation specification](specs/001-project-foundation.md) establishes the baseline for this repository.
+
+## Dependency choices
+
+`transformers` loads Qwen models and provides the training interfaces; `peft` adds LoRA adapters; `torch` executes training; `accelerate` coordinates device and mixed-precision settings; `datasets` provides dataset handling; `trl` supplies supervised fine-tuning utilities; and JupyterLab supports the interactive lessons. `safetensors` and `sentencepiece` cover common model artifact and tokenizer requirements.
+
+Version ranges intentionally keep the initial project compatible with Qwen 3-era Transformers releases while avoiding unreviewed major upgrades. Pin exact versions in a future training-run specification when strict experiment reproducibility is needed.
+
+## Data, models, and privacy
+
+Never commit Hugging Face tokens, private data, downloaded base models, adapter checkpoints, or training caches. Use public or properly licensed data, document its provenance, and remove personal or sensitive information before training. Keep secrets in environment variables or an ignored `.env` file.
+
+## Status
+
+The project foundation is in place. The next spec will select a concrete small Qwen 3 model, define the dataset schema and a baseline LoRA configuration, then introduce the first notebook and training script.
+
+## License
+
+This project is released under the [MIT License](LICENSE).

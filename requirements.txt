@@ -1,0 +1,17 @@
+# Notebook experience
+jupyterlab>=4.4,<5
+ipywidgets>=8.1,<9
+
+# Model loading and parameter-efficient fine-tuning
+torch>=2.5,<3
+transformers>=4.51,<5
+peft>=0.15,<1
+accelerate>=1.4,<2
+datasets>=3.3,<4
+trl>=0.15,<1
+safetensors>=0.5,<1
+sentencepiece>=0.2,<1
+
+# Training utilities and verification
+tqdm>=4.67,<5
+pytest>=8.3,<9

@@ -64,7 +64,7 @@ Using only the approved JSON fact list from the previous message, create two sup
 
 Split rules:
 - Put every approved fact_id in the training split.
-- Create 2–4 distinct, natural training questions for every approved fact. Do not repeat questions.
+- Create 2–4 distinct, natural training questions for every approved fact. Use genuinely different semantic forms rather than changing only a fixed template. Include direct wh-questions where supported by the fact, such as questions about years, roles, degrees, locations, projects, certifications, responsibilities, or skills. Do not repeat questions.
 - Create 30–50 evaluation records for a representative subset of those same fact IDs. Each evaluation question must use a new natural phrasing that does not occur in training.
 - The evaluation split is named `eval_recall`: it measures whether the fine-tuned model recalls trained facts when the question wording changes. It is not an unseen-fact benchmark.
 - Every user question must explicitly name the person (for example, “What is Luigi Saetta's role at Oracle?”). Do not ask what a CV or document says.

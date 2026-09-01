@@ -19,6 +19,7 @@ Facts remain grounded in the CV PDF during dataset creation, but the CV is prove
 * Facts must remain supported by the source CV, with direct contact details and privacy-consent text excluded.
 * The user must review and approve the extracted fact list before Q&A generation. Generated facts and answers are not automatically trustworthy.
 * The training split must contain every approved fact selected for the fine-tuning run.
+* Training questions for each fact must use meaningfully different forms, including direct wh-questions where applicable (for example, year, role, degree, location, project, or certification questions). Rewording only a fixed template is insufficient.
 * The evaluation split is a **recall evaluation**: it must use facts that appear in training, but with previously unseen, natural question phrasings. An exact user-question string must never appear in both splits.
 * A fact-disjoint, unseen-fact dataset may be created as a separate diagnostic transfer test, but it must not be used to select the training checkpoint or presented as the primary measure of factual-memory recall.
 
@@ -32,6 +33,7 @@ Mentioning the CV in every system prompt turns the dataset into a document-groun
 * Every user question contains `Luigi Saetta`.
 * Every assistant response names `Luigi Saetta` or uses a self-contained sentence whose subject is clearly Luigi Saetta.
 * The final private dataset contains 100–150 train and 30–50 evaluation records when the curated fact inventory supports that volume.
+* The training questions for each fact are distinct and include a mix of factual question forms across the dataset.
 * Every evaluation `fact_id` is present in the training split, while no evaluation user-question string is present in the training split.
 * The private PDF, conversation export, JSONL datasets, and generated adapters remain outside version control.
 

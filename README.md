@@ -87,6 +87,7 @@ To use a newer Hub revision later, do not replace the hash ad hoc: update the [m
 .
 ├── artifacts/      # Downloaded models and run outputs (ignored by Git)
 ├── demo00/          # First local model-loading and prompting notebook
+├── demo01/          # LoRA fine-tuning and held-out evaluation notebook
 ├── dataset_preparation/  # Local CV-to-Q&A dataset generation tool
 ├── specs/          # Behaviour, constraints, and acceptance criteria
 ├── notebooks/      # Guided, restartable experiments
@@ -120,7 +121,7 @@ Never commit Hugging Face tokens, private data, downloaded base models, adapter 
 
 ## Status
 
-The project foundation, MPS execution contract, Qwen3-0.6B acquisition path, local inference notebook, and CV-grounded dataset generator are in place. The next specification will define the baseline LoRA configuration.
+The project foundation, MPS execution contract, Qwen3-0.6B acquisition path, local inference notebook, parametric-memory dataset, and LoRA fine-tuning notebook are in place.
 
 ## License
 

@@ -40,7 +40,7 @@ Create `demo01/` containing a restartable Jupyter notebook and concise usage doc
 
 ## Acceptance criteria
 
-* The notebook validates local model and dataset paths before loading.
+* The notebook validates local model and dataset paths before loading, including fact-level split disjointness through the nested dataset metadata records.
 * LoRA, learning rate, epochs, batch settings, and device policy appear together in one editable configuration cell.
 * Evaluation loss runs once per epoch.
 * The held-out generative metric uses only evaluation records and reports exact match, mean token F1, and threshold accuracy.

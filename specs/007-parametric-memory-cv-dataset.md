@@ -15,7 +15,9 @@ This specification overrides the question and system-prompt contract of specific
 * The system message must be neutral: `You are a helpful assistant.` It must not mention a CV, documents, retrieval, sources, or unsupported-answer behaviour.
 * Assistant answers must state the approved fact as a self-contained fact about Luigi Saetta. They must not use phrases such as “According to the CV” or “the candidate”.
 * Facts must remain supported by the source CV, with direct contact details and privacy-consent text excluded.
-* Train and evaluation splits must remain disjoint at fact level. Different phrasings of the same fact must never cross splits.
+* The training split must contain every approved fact selected for the fine-tuning run.
+* The evaluation split is a **recall evaluation**: it must use facts that appear in training, but with previously unseen, natural question phrasings. An exact user-question string must never appear in both splits.
+* A fact-disjoint, unseen-fact dataset may be created as a separate diagnostic transfer test, but it must not be used to select the training checkpoint or presented as the primary measure of factual-memory recall.
 
 ## Rationale
 
@@ -27,9 +29,10 @@ Mentioning the CV in every system prompt turns the dataset into a document-groun
 * Every user question contains `Luigi Saetta`.
 * Every assistant response names `Luigi Saetta` or uses a self-contained sentence whose subject is clearly Luigi Saetta.
 * The final private dataset contains 100–150 train and 30–50 evaluation records when the curated fact inventory supports that volume.
-* The existing privacy and fact-split checks from specifications 005 and 006 still pass.
+* Every evaluation `fact_id` is present in the training split, while no evaluation user-question string is present in the training split.
+* The existing privacy and fact-grounding checks from specifications 005 and 006 still pass, except where this specification explicitly supersedes their fact-disjoint split rule.
 
 ## Verification
 
-* Parse every JSONL record and assert the system prompt, subject name, forbidden source-context terms, and split-disjoint fact IDs.
+* Parse every JSONL record and assert the system prompt, subject name, forbidden source-context terms, evaluation-fact coverage by the training split, and disjoint question strings.
 * Manually review a sample of questions and answers to confirm that they are useful without access to the CV.

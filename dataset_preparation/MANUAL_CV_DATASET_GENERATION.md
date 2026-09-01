@@ -22,7 +22,7 @@ Never commit the original PDF, the conversation export, or generated datasets co
 4. Save the returned `train.jsonl` and `eval.jsonl` files under `artifacts/datasets/<dataset-name>/`.
 5. Validate the JSONL and manually inspect at least 10 examples from each split before fine-tuning.
 
-Keep the evaluation facts completely separate from training facts. It is acceptable to create several questions for the same fact within one split; it is not acceptable to place questions based on the same fact in both splits.
+Use evaluation to measure recall, not unsupported factual generalisation. Put every approved fact in training, then create evaluation questions with new phrasings for a representative subset of those same facts. No exact question string may occur in both splits.
 
 ## Prompt 1 — extract and review atomic facts
 
@@ -63,10 +63,10 @@ After the fact list is approved, copy this prompt in the same conversation:
 Using only the approved JSON fact list from the previous message, create two supervised fine-tuning datasets: one training split and one evaluation split.
 
 Split rules:
-- Split by fact, not by question: a fact_id may appear in exactly one split.
-- Assign approximately 75% of fact IDs to train and 25% to eval.
-- Create 100–150 train examples and 30–50 eval examples when the fact count permits.
-- Generate 2–4 distinct, natural questions for each assigned fact. Do not repeat questions.
+- Put every approved fact_id in the training split.
+- Create 2–4 distinct, natural training questions for every approved fact. Do not repeat questions.
+- Create 30–50 evaluation records for a representative subset of those same fact IDs. Each evaluation question must use a new natural phrasing that does not occur in training.
+- The evaluation split is named `eval_recall`: it measures whether the fine-tuned model recalls trained facts when the question wording changes. It is not an unseen-fact benchmark.
 - Every user question must explicitly name the person (for example, “What is Luigi Saetta's role at Oracle?”). Do not ask what a CV or document says.
 - Use this exact neutral system message: `You are a helpful assistant.`
 - Every assistant answer must be a self-contained sentence about the named person. Do not say “according to the CV”, “the candidate”, or “the document”. Do not add interpretation, reasoning, or new information.
@@ -80,7 +80,7 @@ Return exactly three fenced code blocks and no prose:
 2. `eval.jsonl`
 3. `dataset_manifest.json`
 
-The manifest must include: train_examples, eval_examples, train_fact_ids, eval_fact_ids, and split_overlap_fact_ids. The overlap list must be empty.
+The manifest must include: train_examples, eval_examples, train_fact_ids, eval_fact_ids, evaluation_protocol, and question_overlap_count. Set `evaluation_protocol` to `recall_paraphrase`; `eval_fact_ids` must be a subset of `train_fact_ids`; and `question_overlap_count` must be `0`.
 ```
 
 If ChatGPT stops before completing a large JSONL block, ask it to continue from the next missing record ID without changing or repeating prior records.
@@ -91,7 +91,7 @@ Before training, confirm all of the following:
 
 * Every line in both `.jsonl` files is valid JSON.
 * Each record has exactly three messages with roles `system`, `user`, and `assistant` in that order.
-* `split_overlap_fact_ids` is an empty list.
+* Every evaluation `fact_id` is also present in training, and no user-question string is shared between the splits.
 * The assistant answer is supported by the fact associated with `metadata.fact_id`.
 * The question names the person directly and no message mentions the CV, a document, or a candidate.
 * No contact details or sensitive personal data remain.

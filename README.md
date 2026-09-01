@@ -93,6 +93,10 @@ To use a newer Hub revision later, do not replace the hash ad hoc: update the [m
 
 The default experiment is intentionally small and inspectable: Qwen3-0.6B, a LoRA adapter with rank 8 and alpha 16, a learning rate of `1e-4`, and eight epochs. See the [Demo 01 guide](demo01/README.md) for how to run it.
 
+### Demo 02 — fine-tuned adapter inference
+
+[demo02/](demo02/) loads the local Qwen3-0.6B base model together with the LoRA adapter created by Demo 01. It provides an editable prompt for any question and recommends English questions, matching the language of the initial fine-tuning data.
+
 ## Example local results
 
 The following is an eight-epoch Demo 01 run on a private CV-derived dataset. It is an illustrative local result, not a benchmark: the dataset, adapter, and evaluation records are intentionally private and are not part of this repository.
@@ -117,6 +121,7 @@ Evaluation loss decreased at every epoch. The final deterministic recall evaluat
 ├── artifacts/      # Downloaded models and run outputs (ignored by Git)
 ├── demo00/          # First local model-loading and prompting notebook
 ├── demo01/          # LoRA fine-tuning and held-out evaluation notebook
+├── demo02/          # Fine-tuned LoRA adapter inference notebook
 ├── dataset_preparation/  # ChatGPT-assisted CV-to-Q&A dataset guide
 ├── specs/          # Behaviour, constraints, and acceptance criteria
 ├── notebooks/      # Guided, restartable experiments
@@ -146,7 +151,7 @@ Version ranges intentionally keep the initial project compatible with Qwen 3-era
 
 ## Status
 
-The project foundation, MPS execution contract, Qwen3-0.6B acquisition path, Demo 00 local-inference notebook, private parametric-memory dataset workflow, and Demo 01 LoRA fine-tuning notebook are in place.
+The project foundation, MPS execution contract, Qwen3-0.6B acquisition path, Demo 00 local-inference notebook, private parametric-memory dataset workflow, Demo 01 LoRA fine-tuning notebook, and Demo 02 adapter-inference notebook are in place.
 
 ## License
 

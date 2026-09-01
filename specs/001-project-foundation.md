@@ -16,7 +16,7 @@ Cloud training, distributed training, full-parameter fine-tuning, hosted inferen
 
 * Development uses the existing `llm-fine-tuning-on-mac` Conda environment.
 * The user has a MacBook; Apple Silicon/MPS is preferred when available, with CPU fallback made explicit.
-* A small Qwen 3 open-weight model will be selected and documented in a later model-and-training specification.
+* The first model is `Qwen/Qwen3-0.6B` at the pinned revision specified in [specification 003](003-qwen3-0.6b-model-acquisition.md).
 * Device selection follows the Apple Silicon MPS execution contract in [specification 002](002-apple-silicon-mps-execution.md).
 
 ## Acceptance criteria

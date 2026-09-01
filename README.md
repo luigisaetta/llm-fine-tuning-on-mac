@@ -10,14 +10,14 @@ This repository is a hands-on, spec-driven project for fine-tuning a small model
 
 The project will guide you through a small, practical workflow:
 
-1. Select and download an appropriate Qwen 3 open-weight model from the Hugging Face Hub.
+1. Download the selected Qwen 3 open-weight model from the Hugging Face Hub.
 2. Inspect and validate an instruction-style dataset.
 3. Format examples, tokenize them, and configure LoRA adapters.
 4. Fine-tune locally, preferring Apple Silicon's MPS backend when it is available.
 5. Evaluate the adapter and compare base-model versus adapted responses.
 6. Save, reload, and share the lightweight LoRA adapter—without duplicating the base model.
 
-The first implementation will target a deliberately small model and dataset. This keeps the feedback loop short and makes the resource trade-offs understandable before you scale up.
+The first implementation targets the deliberately small `Qwen/Qwen3-0.6B` model and a small dataset. This keeps the feedback loop short and makes the resource trade-offs understandable before you scale up.
 
 ## Why LoRA on a MacBook?
 
@@ -39,9 +39,9 @@ Local fine-tuning is constrained by unified memory, thermal limits, model size, 
 * The existing Conda environment named `llm-fine-tuning-on-mac`
 * Python compatible with the dependencies in `requirements.txt`
 * Internet access for the initial Hugging Face model and dataset download
-* A Hugging Face account/token only if the selected model or dataset requires authentication
+* A Hugging Face account/token only if a future model or dataset requires authentication
 
-The eventual model selection will be documented with its exact Hugging Face identifier, revision, licence, and realistic hardware guidance. Do not assume that every Qwen 3 checkpoint will fit or train effectively on every MacBook.
+The selected model is [`Qwen/Qwen3-0.6B`](https://huggingface.co/Qwen/Qwen3-0.6B), a public Apache-2.0 Causal Language Model in Safetensors format. Its 0.6B parameter scale makes it the initial learning target, not a guarantee that every training configuration will suit every MacBook.
 
 ## Setup
 
@@ -64,10 +64,28 @@ Start the notebook environment when notebooks are added:
 jupyter lab
 ```
 
+## Download Qwen3-0.6B from Hugging Face Hub
+
+The project uses the [`hf` command-line interface](https://huggingface.co/docs/huggingface_hub/guides/cli) supplied by `huggingface_hub`. The selected repository is public, so the following commands do not need a token.
+
+From the repository root, activate the environment and download the complete model, tokenizer, and configuration to the project-local artifact directory:
+
+```bash
+conda activate llm-fine-tuning-on-mac
+hf download Qwen/Qwen3-0.6B \
+  --revision c1899de289a04d12100db370d81485cdf75e47ca \
+  --local-dir artifacts/models/Qwen3-0.6B
+```
+
+The final command prints the local destination. `artifacts/` is excluded from Git, including the metadata cache created by the CLI, so base-model files cannot be committed by accident.
+
+To use a newer Hub revision later, do not replace the hash ad hoc: update the [model acquisition specification](specs/003-qwen3-0.6b-model-acquisition.md), record the new full commit hash, and rerun the command. For a private or gated future artifact, authenticate interactively with `hf auth login`; never paste a token into a command that is saved in shell history.
+
 ## Planned layout
 
 ```text
 .
+├── artifacts/      # Downloaded models and run outputs (ignored by Git)
 ├── specs/          # Behaviour, constraints, and acceptance criteria
 ├── notebooks/      # Guided, restartable experiments
 ├── src/            # Reusable training, data, and inference code
@@ -100,7 +118,7 @@ Never commit Hugging Face tokens, private data, downloaded base models, adapter 
 
 ## Status
 
-The project foundation is in place. The next spec will select a concrete small Qwen 3 model, define the dataset schema and a baseline LoRA configuration, then introduce the first notebook and training script.
+The project foundation, MPS execution contract, and Qwen3-0.6B acquisition path are in place. The next specification will define the dataset schema and baseline LoRA configuration, then introduce the first notebook and training script.
 
 ## License
 

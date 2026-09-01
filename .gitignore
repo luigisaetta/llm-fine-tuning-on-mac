@@ -1,0 +1,6 @@
+# Downloaded Hugging Face models and local run outputs
+artifacts/
+
+# Local secrets and notebook checkpoints
+.env
+.ipynb_checkpoints/

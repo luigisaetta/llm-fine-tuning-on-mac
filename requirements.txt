@@ -4,6 +4,7 @@ ipywidgets>=8.1,<9
 
 # Model loading and parameter-efficient fine-tuning
 torch>=2.5,<3
+huggingface_hub>=0.30,<1
 transformers>=4.51,<5
 peft>=0.15,<1
 accelerate>=1.4,<2

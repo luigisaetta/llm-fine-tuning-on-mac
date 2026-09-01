@@ -2,6 +2,8 @@
 
 This guide describes a reviewable, manual workflow for creating private training and evaluation datasets from a CV PDF. It is designed for a future LoRA/PEFT supervised fine-tuning run using the conversational `messages` format accepted by TRL's `SFTTrainer`.
 
+The CV is used only to curate verified facts. It is **not** runtime context: the final model should answer direct questions about the named person without being told that a CV exists.
+
 The workflow deliberately separates fact extraction from Q&A generation. Review the extracted facts before asking for datasets: this is the most effective protection against invented or outdated CV details.
 
 ## Privacy first
@@ -65,11 +67,13 @@ Split rules:
 - Assign approximately 75% of fact IDs to train and 25% to eval.
 - Create 100–150 train examples and 30–50 eval examples when the fact count permits.
 - Generate 2–4 distinct, natural questions for each assigned fact. Do not repeat questions.
-- Every assistant answer must contain only the corresponding approved fact. Do not add interpretation, reasoning, or new information.
+- Every user question must explicitly name the person (for example, “What is Luigi Saetta's role at Oracle?”). Do not ask what a CV or document says.
+- Use this exact neutral system message: `You are a helpful assistant.`
+- Every assistant answer must be a self-contained sentence about the named person. Do not say “according to the CV”, “the candidate”, or “the document”. Do not add interpretation, reasoning, or new information.
 - Do not include direct contact details, privacy-consent text, or any fact not in the approved list.
 
 Use exactly this JSONL schema, one JSON object per line:
-{"id":"train-F001-q1","messages":[{"role":"system","content":"You are a professional CV assistant. Answer only with information explicitly present in the candidate's CV. Do not infer or add details."},{"role":"user","content":"A factual question about the CV"},{"role":"assistant","content":"The approved fact"}],"metadata":{"fact_id":"F001","source_page":1,"split":"train"}}
+{"id":"train-F001-q1","messages":[{"role":"system","content":"You are a helpful assistant."},{"role":"user","content":"What is Luigi Saetta's role at Oracle?"},{"role":"assistant","content":"Luigi Saetta is a Team Member in Oracle's EMEA Data Science, ML & AI Team."}],"metadata":{"fact_id":"F001","source_page":1,"split":"train"}}
 
 Return exactly three fenced code blocks and no prose:
 1. `train.jsonl`
@@ -89,6 +93,7 @@ Before training, confirm all of the following:
 * Each record has exactly three messages with roles `system`, `user`, and `assistant` in that order.
 * `split_overlap_fact_ids` is an empty list.
 * The assistant answer is supported by the fact associated with `metadata.fact_id`.
+* The question names the person directly and no message mentions the CV, a document, or a candidate.
 * No contact details or sensitive personal data remain.
 * The data contains at least 100 training and 30 evaluation records, or the shortfall is documented and accepted.
 

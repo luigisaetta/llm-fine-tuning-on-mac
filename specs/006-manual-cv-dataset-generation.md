@@ -14,6 +14,7 @@ Provide an English Markdown guide with a two-phase ChatGPT workflow: first extra
 * The guide must request only facts explicitly supported by the PDF and exclude direct contact details and privacy-consent text.
 * Split assignment must happen at fact level, with no fact ID shared across train and evaluation.
 * The requested outputs must use conversational `messages` JSONL compatible with TRL SFT training.
+* The prompts must teach direct factual knowledge about the named person, without using a CV-specific system prompt or treating the CV as inference-time context.
 * The target output ranges are 100–150 training examples and 30–50 evaluation examples when the CV supports enough facts.
 * The guide must direct private files to ignored `artifacts/` paths.
 

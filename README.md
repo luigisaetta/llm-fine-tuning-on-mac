@@ -95,7 +95,9 @@ The default experiment is intentionally small and inspectable: Qwen3-0.6B, a LoR
 
 ### Demo 02 — fine-tuned adapter inference
 
-[demo02/](demo02/) loads the local Qwen3-0.6B base model together with the LoRA adapter created by Demo 01. It provides an editable prompt for any question and recommends English questions, matching the language of the initial fine-tuning data.
+[demo02/](demo02/) loads the local Qwen3-0.6B base model together with the LoRA adapter created by Demo 01. It provides an editable prompt for any question and recommends English questions, matching the language of the initial fine-tuning data. Use it as a manual behaviour check: strong recall on the curated facts does not guarantee reliable answers to arbitrary or substantially reworded questions.
+
+Future hypotheses for improving factual recall and comparing a moderately larger model are recorded in [experiments/README.md](experiments/README.md).
 
 ## Example local results
 
@@ -122,6 +124,7 @@ Evaluation loss decreased at every epoch. The final deterministic recall evaluat
 ├── demo00/          # First local model-loading and prompting notebook
 ├── demo01/          # LoRA fine-tuning and held-out evaluation notebook
 ├── demo02/          # Fine-tuned LoRA adapter inference notebook
+├── experiments/     # Proposed follow-up experiments
 ├── dataset_preparation/  # ChatGPT-assisted CV-to-Q&A dataset guide
 ├── specs/          # Behaviour, constraints, and acceptance criteria
 ├── notebooks/      # Guided, restartable experiments

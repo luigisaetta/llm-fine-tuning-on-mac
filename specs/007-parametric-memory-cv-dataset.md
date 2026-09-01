@@ -1,4 +1,4 @@
-# Parametric-Memory CV Dataset Specification
+# ChatGPT-Assisted Parametric-Memory Dataset Specification
 
 ## Problem
 
@@ -6,7 +6,9 @@ The purpose of fine-tuning is to teach the model factual knowledge about Luigi S
 
 ## Scope
 
-This specification overrides the question and system-prompt contract of specification 005 for the manually curated datasets. Facts remain grounded in the CV PDF during dataset creation, but the CV is provenance only and is never represented as runtime context.
+The supported workflow is documented in `dataset_preparation/MANUAL_CV_DATASET_GENERATION.md`. A capable document assistant such as ChatGPT extracts atomic facts from a user-uploaded CV PDF; the user reviews and approves that fact list; the same assistant then creates the JSONL splits from approved facts only.
+
+Facts remain grounded in the CV PDF during dataset creation, but the CV is provenance only and is never represented as runtime context. Local model-driven fact extraction and fact-disjoint evaluation are out of scope for this project.
 
 ## Dataset contract
 
@@ -15,6 +17,7 @@ This specification overrides the question and system-prompt contract of specific
 * The system message must be neutral: `You are a helpful assistant.` It must not mention a CV, documents, retrieval, sources, or unsupported-answer behaviour.
 * Assistant answers must state the approved fact as a self-contained fact about Luigi Saetta. They must not use phrases such as “According to the CV” or “the candidate”.
 * Facts must remain supported by the source CV, with direct contact details and privacy-consent text excluded.
+* The user must review and approve the extracted fact list before Q&A generation. Generated facts and answers are not automatically trustworthy.
 * The training split must contain every approved fact selected for the fine-tuning run.
 * The evaluation split is a **recall evaluation**: it must use facts that appear in training, but with previously unseen, natural question phrasings. An exact user-question string must never appear in both splits.
 * A fact-disjoint, unseen-fact dataset may be created as a separate diagnostic transfer test, but it must not be used to select the training checkpoint or presented as the primary measure of factual-memory recall.
@@ -30,9 +33,10 @@ Mentioning the CV in every system prompt turns the dataset into a document-groun
 * Every assistant response names `Luigi Saetta` or uses a self-contained sentence whose subject is clearly Luigi Saetta.
 * The final private dataset contains 100–150 train and 30–50 evaluation records when the curated fact inventory supports that volume.
 * Every evaluation `fact_id` is present in the training split, while no evaluation user-question string is present in the training split.
-* The existing privacy and fact-grounding checks from specifications 005 and 006 still pass, except where this specification explicitly supersedes their fact-disjoint split rule.
+* The private PDF, conversation export, JSONL datasets, and generated adapters remain outside version control.
 
 ## Verification
 
 * Parse every JSONL record and assert the system prompt, subject name, forbidden source-context terms, evaluation-fact coverage by the training split, and disjoint question strings.
 * Manually review a sample of questions and answers to confirm that they are useful without access to the CV.
+* Follow the validation checklist in `dataset_preparation/MANUAL_CV_DATASET_GENERATION.md` before a training run.

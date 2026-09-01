@@ -6,7 +6,7 @@ Provide a small, approachable project that teaches fine-tuning an open-weight Qw
 
 ## Scope
 
-The project will provide a documented Python environment, reusable Python scripts, and Jupyter notebooks covering dataset preparation, LoRA fine-tuning, evaluation, and adapter-based inference. Models are obtained from the Hugging Face Hub.
+The project will provide a documented Python environment and Jupyter notebooks covering ChatGPT-assisted dataset preparation, LoRA fine-tuning, evaluation, and adapter-based inference. Models are obtained from the Hugging Face Hub.
 
 ## Out of scope
 

@@ -2,7 +2,7 @@
 
 Turn a compact open-weight language model into a model that understands *your* task—without leaving your MacBook.
 
-This repository is a hands-on, spec-driven project for fine-tuning a small model from the [Qwen 3 family](https://huggingface.co/Qwen) with **LoRA** (Low-Rank Adaptation). It combines reproducible Python scripts with explorable Jupyter notebooks, so you can both understand each step and run the whole workflow again.
+This repository is a hands-on, spec-driven project for fine-tuning a small model from the [Qwen 3 family](https://huggingface.co/Qwen) with **LoRA** (Low-Rank Adaptation). It combines a reviewable dataset-generation guide with explorable Jupyter notebooks, so you can both understand each step and run the whole workflow again.
 
 > The aim is not merely to launch training. It is to make the decisions behind a reliable local fine-tuning workflow visible: data format, prompt template, memory limits, LoRA configuration, evaluation, and adapter-based inference.
 
@@ -30,7 +30,7 @@ Local fine-tuning is constrained by unified memory, thermal limits, model size, 
 * **Spec-driven:** every meaningful feature starts with a concise specification in [`specs/`](specs/).
 * **Mac-first:** PyTorch's Apple Silicon/MPS backend is preferred where supported; CPU fallback is explicit.
 * **Open and reproducible:** models come from Hugging Face Hub; configuration, seeds, and dataset assumptions are documented.
-* **Learn by inspecting:** notebooks explain the workflow, while scripts hold reusable implementation logic.
+* **Learn by inspecting:** the dataset guide and notebooks explain each stage of the workflow.
 * **Adapter-only outputs:** keep downloaded base weights, checkpoints, and caches out of Git.
 
 ## Prerequisites
@@ -117,7 +117,7 @@ Evaluation loss decreased at every epoch. The final deterministic recall evaluat
 ├── artifacts/      # Downloaded models and run outputs (ignored by Git)
 ├── demo00/          # First local model-loading and prompting notebook
 ├── demo01/          # LoRA fine-tuning and held-out evaluation notebook
-├── dataset_preparation/  # Local CV-to-Q&A dataset generation tool
+├── dataset_preparation/  # ChatGPT-assisted CV-to-Q&A dataset guide
 ├── specs/          # Behaviour, constraints, and acceptance criteria
 ├── notebooks/      # Guided, restartable experiments
 ├── src/            # Reusable training, data, and inference code

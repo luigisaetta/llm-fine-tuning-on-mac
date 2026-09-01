@@ -86,6 +86,7 @@ To use a newer Hub revision later, do not replace the hash ad hoc: update the [m
 ```text
 .
 ├── artifacts/      # Downloaded models and run outputs (ignored by Git)
+├── demo00/          # First local model-loading and prompting notebook
 ├── specs/          # Behaviour, constraints, and acceptance criteria
 ├── notebooks/      # Guided, restartable experiments
 ├── src/            # Reusable training, data, and inference code
@@ -118,7 +119,7 @@ Never commit Hugging Face tokens, private data, downloaded base models, adapter 
 
 ## Status
 
-The project foundation, MPS execution contract, and Qwen3-0.6B acquisition path are in place. The next specification will define the dataset schema and baseline LoRA configuration, then introduce the first notebook and training script.
+The project foundation, MPS execution contract, Qwen3-0.6B acquisition path, and the first local inference notebook are in place. The next specification will define the dataset schema and baseline LoRA configuration.
 
 ## License
 

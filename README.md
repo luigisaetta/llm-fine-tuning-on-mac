@@ -81,7 +81,36 @@ The final command prints the local destination. `artifacts/` is excluded from Gi
 
 To use a newer Hub revision later, do not replace the hash ad hoc: update the [model acquisition specification](specs/003-qwen3-0.6b-model-acquisition.md), record the new full commit hash, and rerun the command. For a private or gated future artifact, authenticate interactively with `hf auth login`; never paste a token into a command that is saved in shell history.
 
-## Planned layout
+## Included demos
+
+### Demo 00 — local inference
+
+[`demo00/`](demo00/) contains a restartable notebook that loads the downloaded Qwen3-0.6B model from `artifacts/`, verifies its Qwen configuration and selected MPS/CPU device, then generates an answer to an editable prompt. It is the quick local-health check before any training run.
+
+### Demo 01 — LoRA factual-recall fine-tuning
+
+[`demo01/`](demo01/) contains the end-to-end fine-tuning notebook. It loads an ignored, private Q&A dataset, validates its conversational schema and recall-evaluation contract, trains a PEFT/LoRA adapter on MPS when available, evaluates loss after every epoch, saves only adapter artifacts, and generates deterministic answers for held-out question paraphrases.
+
+The default experiment is intentionally small and inspectable: Qwen3-0.6B, a LoRA adapter with rank 8 and alpha 16, a learning rate of `1e-4`, and eight epochs. See the [Demo 01 guide](demo01/README.md) for how to run it.
+
+## Example local results
+
+The following is an eight-epoch Demo 01 run on a private CV-derived dataset. It is an illustrative local result, not a benchmark: the dataset, adapter, and evaluation records are intentionally private and are not part of this repository.
+
+| Epoch | Training loss | Evaluation loss |
+| ---: | ---: | ---: |
+| 1 | 1.5084 | 1.310615 |
+| 2 | 0.9688 | 0.898974 |
+| 3 | 0.6019 | 0.571389 |
+| 4 | 0.2984 | 0.291942 |
+| 5 | 0.1233 | 0.131696 |
+| 6 | 0.0557 | 0.064139 |
+| 7 | 0.0280 | 0.040271 |
+| 8 | 0.0144 | 0.026364 |
+
+Evaluation loss decreased at every epoch. The final deterministic recall evaluation achieved a 90.9% exact-match rate, a mean token F1 of 0.969, and 90.9% accuracy at token F1 ≥ 0.80. These figures show that the adapter can recall the curated facts under unseen question phrasings; they do not establish general-purpose factual reliability.
+
+## Repository layout
 
 ```text
 .
@@ -121,7 +150,7 @@ Never commit Hugging Face tokens, private data, downloaded base models, adapter 
 
 ## Status
 
-The project foundation, MPS execution contract, Qwen3-0.6B acquisition path, local inference notebook, parametric-memory dataset, and LoRA fine-tuning notebook are in place.
+The project foundation, MPS execution contract, Qwen3-0.6B acquisition path, Demo 00 local-inference notebook, private parametric-memory dataset workflow, and Demo 01 LoRA fine-tuning notebook are in place.
 
 ## License
 

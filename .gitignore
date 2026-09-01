@@ -1,5 +1,7 @@
 # Downloaded Hugging Face models and local run outputs
 artifacts/
+pdf/
+.DS_Store
 
 # Local secrets and notebook checkpoints
 .env

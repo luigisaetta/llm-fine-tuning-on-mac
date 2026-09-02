@@ -96,6 +96,38 @@ The default experiment uses Qwen3-1.7B, a LoRA adapter with rank 8 and alpha 16,
 
 [demo02/](demo02/) loads the local Qwen3-1.7B base model together with the LoRA adapter created by Demo 01. It provides an editable prompt for any question and recommends English questions, matching the language of the initial fine-tuning data. Use it as a manual behaviour check: strong recall on the curated facts does not guarantee reliable answers to arbitrary or substantially reworded questions.
 
+## Merge and publish a standalone model
+
+The LoRA adapter is normally the preferred local artifact because it is small and retains the base-model provenance. To create a standalone model, merge it into the local Qwen3-1.7B weights. The merge uses `float32`, defaults to CPU, and needs enough local memory for the base model, adapter, and merged weights. It writes only to a new or empty ignored directory.
+
+```bash
+conda activate llm-fine-tuning-on-mac
+python scripts/merge_lora_adapter.py
+```
+
+To use MPS explicitly, add `--device mps`; the script stops with an error if MPS is unavailable. Review the merged model locally before publishing it. Upload requires a write token with model-repository permissions in the `HF_TOKEN` environment variable, an explicit target repository, and the opt-in flag. Set the token through a shell profile, secret manager, or other mechanism that does not save it in shell history:
+
+```bash
+python scripts/merge_lora_adapter.py \
+  --push-to-hub \
+  --repo-id YOUR_USERNAME/qwen3-1.7b-lora-merged \
+  --private
+```
+
+`--private` affects a newly created repository. If the repository already exists, the explicit command uploads a new commit to it. Do not publish a merged model if its adapter was trained on private or personal data that must not be shared.
+
+The generated model card already declares `Qwen/Qwen3-1.7B` as `base_model`, the Transformers library, text-generation pipeline, LoRA merge provenance, unpinned base revision, private-dataset status, and limitations. Before public publication, review it on the Hub and add only non-sensitive information that you can substantiate.
+
+If the local merge completed but the upload failed, do not rerun the merge or overwrite its directory. Retry only the upload after setting `HF_TOKEN` securely:
+
+```bash
+python scripts/merge_lora_adapter.py \
+  --push-to-hub \
+  --upload-existing-output \
+  --repo-id YOUR_USERNAME/qwen3-1.7b-lora-merged \
+  --private
+```
+
 Future hypotheses for improving factual recall are recorded in [experiments/README.md](experiments/README.md).
 
 ## Repository layout
@@ -109,14 +141,13 @@ Future hypotheses for improving factual recall are recorded in [experiments/READ
 ├── experiments/     # Proposed follow-up experiments
 ├── dataset_preparation/  # ChatGPT-assisted CV-to-Q&A dataset guide
 ├── specs/          # Behaviour, constraints, and acceptance criteria
-├── notebooks/      # Guided, restartable experiments
-├── src/            # Reusable training, data, and inference code
+├── scripts/        # Reusable local model-management commands
 ├── tests/          # Fast tests with no model downloads
 ├── requirements.txt
 └── README.md
 ```
 
-The `notebooks/`, `src/`, and `tests/` directories will be introduced with the specifications that define their first behaviour.
+Additional reusable training and data modules will be introduced with the specifications that define their first behaviour.
 
 ## Apple Silicon and MPS
 
@@ -136,7 +167,7 @@ Version ranges intentionally keep the initial project compatible with Qwen 3-era
 
 ## Status
 
-The project foundation, MPS execution contract, Qwen3-1.7B acquisition path, Demo 00 local-inference notebook, private parametric-memory dataset workflow, Demo 01 LoRA fine-tuning notebook, and Demo 02 adapter-inference notebook are in place.
+The planned local workflow is complete: Qwen3-1.7B acquisition, local inference, LoRA fine-tuning, evaluation, adapter inference, standalone merge, and optional Hub publication have been implemented and verified through the available local checks. The remaining improvement area is a broader, more diverse, and carefully reviewed training and evaluation dataset.
 
 ## License
 

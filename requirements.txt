@@ -13,6 +13,7 @@ datasets>=3.3,<4
 trl>=0.15,<1
 safetensors>=0.5,<1
 sentencepiece>=0.2,<1
+oci>=2.185,<3
 
 # Training utilities and verification
 tqdm>=4.67,<5

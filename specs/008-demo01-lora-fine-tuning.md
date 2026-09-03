@@ -22,7 +22,7 @@ Create `demo01/` containing a restartable Jupyter notebook and concise usage doc
 | Micro-batch size | 1 | Reduces Apple unified-memory pressure; reduce sequence length or stop if local MPS memory is unsuitable. |
 | Gradient accumulation | 8 | Gives an effective batch size of 8. |
 | Maximum sequence length | 512 | More than sufficient for short factual Q&A while bounding memory. |
-| Precision | float32 | Conservative MPS baseline. |
+| Precision | bfloat16 | Load the Qwen3 base model and LoRA adapter in the base model's published dtype. Training and evaluation use BF16 on MPS; this requires macOS 14 or later. |
 
 ## Training and evaluation contract
 
@@ -32,6 +32,8 @@ Create `demo01/` containing a restartable Jupyter notebook and concise usage doc
 * `eval_strategy="epoch"` and `save_strategy="epoch"` are mandatory. The trainer records `eval_loss` after every epoch and restores the adapter with the lowest evaluation loss.
 * Final response accuracy is measured on the evaluation split by deterministic generation (`do_sample=False`). A response is correct when token-level F1 against the approved answer is at least 0.80; exact-match rate and mean token F1 are also reported.
 * The generative accuracy metric is complementary to `eval_loss`, not a replacement for it.
+* The notebook must load floating-point base-model parameters in `torch.bfloat16`, enable `bf16=True` and `bf16_full_eval=True` in `SFTConfig`, and fail before training if any floating-point model or trainable LoRA parameter is not BF16.
+* BF16 training requires available MPS and macOS 14 or later. The notebook must fail with an actionable error when either condition is not met.
 
 ## Privacy and artifacts
 
@@ -43,6 +45,7 @@ Create `demo01/` containing a restartable Jupyter notebook and concise usage doc
 
 * The notebook validates local model and dataset paths before loading, including either a single Safetensors weight file or a complete indexed set of Safetensors shards; it also verifies that every evaluation fact ID occurs in training and that train/evaluation question strings do not overlap.
 * LoRA, learning rate, epochs, batch settings, and device policy appear together in one editable configuration cell.
+* The configuration cell makes the BF16 dtype visible and reports the actual model and LoRA trainable-parameter dtypes before training.
 * Evaluation loss runs once per epoch.
 * The held-out generative metric uses only evaluation records and reports exact match, mean token F1, and threshold accuracy.
 * The saved output is a PEFT adapter rather than a duplicate base model.
@@ -51,5 +54,5 @@ Create `demo01/` containing a restartable Jupyter notebook and concise usage doc
 
 * Validate the notebook JSON and ensure it has no stored outputs.
 * Import its dependencies using the project Conda environment.
-* Before a full run, inspect selected device, trainable-parameter count, and dataset sizes.
+* Before a full run, inspect selected device, model and trainable-parameter dtypes, trainable-parameter count, and dataset sizes. On MPS, run only on macOS 14 or later.
 * After a full run, inspect the epoch-level `eval_loss` table and manually review generated evaluation samples.

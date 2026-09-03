@@ -32,6 +32,7 @@ Local fine-tuning is constrained by unified memory, thermal limits, model size, 
 * **Open and reproducible:** models come from Hugging Face Hub; configuration, seeds, and dataset assumptions are documented.
 * **Learn by inspecting:** the dataset guide and notebooks explain each stage of the workflow.
 * **Adapter-only outputs:** keep downloaded base weights, checkpoints, and caches out of Git.
+* **Traceable changes:** [`CHANGELOG.md`](CHANGELOG.md) records user-visible additions and significant changes before release.
 
 ## Prerequisites
 
@@ -135,6 +136,7 @@ Future hypotheses for improving factual recall are recorded in [experiments/READ
 ```text
 .
 ├── artifacts/      # Downloaded models and run outputs (ignored by Git)
+├── CHANGELOG.md     # Unreleased and released user-visible changes
 ├── demo00/          # First local model-loading and prompting notebook
 ├── demo01/          # LoRA fine-tuning and held-out evaluation notebook
 ├── demo02/          # Fine-tuned LoRA adapter inference notebook

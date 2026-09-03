@@ -15,6 +15,6 @@ conda activate llm-fine-tuning-on-mac
 jupyter lab
 ```
 
-Open [`demo01_lora_fine_tuning.ipynb`](demo01_lora_fine_tuning.ipynb), select the project kernel, review the dedicated configuration cell, and run cells in order.
+Open [`demo01_lora_fine_tuning.ipynb`](demo01_lora_fine_tuning.ipynb), select the project kernel, review the dedicated configuration cell, and run cells in order. The notebook loads the Qwen3 base model and trains the LoRA adapter in BF16. BF16 training on MPS requires macOS 14 or later; the notebook verifies the resulting floating-point parameter dtypes before training.
 
 The notebook evaluates loss at the end of each epoch and then measures deterministic answer quality on the held-out evaluation facts. All checkpoints and adapters are saved under ignored `artifacts/training/` paths.

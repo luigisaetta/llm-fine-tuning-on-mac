@@ -24,6 +24,7 @@ Specifications are source-controlled project artifacts, not disposable planning 
 
 * All documentation, source-code comments, Markdown files, notebook narrative cells, and user-facing output must be written in English.
 * Keep documentation practical, accurate, and aligned with the implementation.
+* Maintain `CHANGELOG.md` in the repository root. Record every user-visible addition and every significant change under `Unreleased` before it is released.
 * Make the exact model identifier, revision (where pinned), dataset provenance, training configuration, hardware assumptions, and expected outputs explicit.
 * Do not claim model capabilities, benchmark quality, licence terms, memory requirements, or Apple Silicon support unless verified by implementation or authoritative Hugging Face/Qwen documentation.
 * Do not commit private datasets, personal data, model checkpoints, Hugging Face tokens, or generated caches.

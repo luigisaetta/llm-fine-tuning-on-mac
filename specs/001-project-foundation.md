@@ -6,7 +6,7 @@ Provide a small, approachable project that teaches fine-tuning an open-weight Qw
 
 ## Scope
 
-The project will provide a documented Python environment and Jupyter notebooks covering ChatGPT-assisted dataset preparation, LoRA fine-tuning, evaluation, and adapter-based inference. Models are obtained from the Hugging Face Hub.
+The project will provide a documented Python environment and Jupyter notebooks covering ChatGPT-assisted dataset preparation, LoRA fine-tuning, evaluation, and adapter-based inference. Models are obtained from the Hugging Face Hub. A root `CHANGELOG.md` records user-visible additions and significant changes before release.
 
 ## Out of scope
 
@@ -23,6 +23,7 @@ Cloud training, distributed training, full-parameter fine-tuning, hosted inferen
 
 * `AGENTS.md` defines the project boundaries and mandatory spec-driven workflow.
 * The README explains the intended learning path, setup, dependencies, reproducibility, and project layout in English.
+* `CHANGELOG.md` exists at the repository root and has an `Unreleased` section for pending additions and significant changes.
 * `requirements.txt` includes the notebook, Hugging Face, PyTorch, and LoRA dependencies needed for the first implementation.
 * Dependencies install into the named Conda environment.
 
@@ -31,4 +32,5 @@ Cloud training, distributed training, full-parameter fine-tuning, hosted inferen
 * Install `requirements.txt` with the named Conda environment.
 * Import the core packages and print their versions.
 * Review the README and agent instructions against this specification.
+* Review `CHANGELOG.md` to confirm it documents the current unreleased changes.
 * Review MPS device requirements against specification 002 before implementing training code.

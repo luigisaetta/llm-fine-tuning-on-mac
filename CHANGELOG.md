@@ -11,6 +11,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 * Added this project changelog for user-visible additions and significant changes.
 * Added a Demo 01 loss-trend chart with distinct training and validation loss series and a grid.
 * Added an OCI Python SDK script to upload complete merged-model directories to Object Storage with multipart uploads, progress reporting, dry-run planning, and explicit overwrite control.
+* Added Demo 03, a LangChain `ChatOCIGenAI` client for one-prompt inference against an OCI Generative AI Dedicated AI Cluster endpoint.
 
 ### Changed
 

@@ -97,6 +97,10 @@ The default experiment uses Qwen3-1.7B, a LoRA adapter with rank 8 and alpha 16,
 
 [demo02/](demo02/) loads the local Qwen3-1.7B base model together with the LoRA adapter created by Demo 01. It provides an editable prompt for any question and recommends English questions, matching the language of the initial fine-tuning data. Use it as a manual behaviour check: strong recall on the curated facts does not guarantee reliable answers to arbitrary or substantially reworded questions.
 
+### Demo 03 — OCI Dedicated AI Cluster endpoint inference
+
+[demo03/](demo03/) is a minimal LangChain client for an imported fine-tuned model hosted on an OCI Generative AI Dedicated AI Cluster. It invokes the endpoint with `ChatOCIGenAI`, reading OCI configuration and the endpoint OCID only from environment variables.
+
 ## Merge and publish a standalone model
 
 The LoRA adapter is normally the preferred local artifact because it is small and retains the base-model provenance. To create a standalone model, merge it into the local Qwen3-1.7B weights. The merge preserves `bfloat16`, defaults to CPU, and needs enough local memory for the base model, adapter, and merged weights. It writes only to a new or empty ignored directory. OCI compatibility is enabled by default: the result retains the base model's `config.json`, including the architecture metadata and declared Transformers version, for OCI Generative AI imported-model validation.
@@ -150,6 +154,7 @@ Future hypotheses for improving factual recall are recorded in [experiments/READ
 ├── demo00/          # First local model-loading and prompting notebook
 ├── demo01/          # LoRA fine-tuning and held-out evaluation notebook
 ├── demo02/          # Fine-tuned LoRA adapter inference notebook
+├── demo03/          # LangChain inference against an OCI dedicated endpoint
 ├── experiments/     # Proposed follow-up experiments
 ├── dataset_preparation/  # ChatGPT-assisted CV-to-Q&A dataset guide
 ├── specs/          # Behaviour, constraints, and acceptance criteria

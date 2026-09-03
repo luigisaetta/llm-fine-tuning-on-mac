@@ -32,7 +32,7 @@ Create `demo01/` containing a restartable Jupyter notebook and concise usage doc
 * `eval_strategy="epoch"` and `save_strategy="epoch"` are mandatory. The trainer records `eval_loss` after every epoch and restores the adapter with the lowest evaluation loss.
 * Final response accuracy is measured on the evaluation split by deterministic generation (`do_sample=False`). A response is correct when token-level F1 against the approved answer is at least 0.80; exact-match rate and mean token F1 are also reported.
 * The generative accuracy metric is complementary to `eval_loss`, not a replacement for it.
-* The notebook must load floating-point base-model parameters in `torch.bfloat16`, enable `bf16=True` and `bf16_full_eval=True` in `SFTConfig`, and fail before training if any floating-point model or trainable LoRA parameter is not BF16.
+* The notebook must load floating-point base-model parameters in `torch.bfloat16`, create the PEFT model with `autocast_adapter_dtype=False` so that trainable LoRA parameters remain BF16, enable `bf16=True` and `bf16_full_eval=True` in `SFTConfig`, and fail before training if any floating-point model or trainable LoRA parameter is not BF16.
 * BF16 training requires available MPS and macOS 14 or later. The notebook must fail with an actionable error when either condition is not met.
 
 ## Privacy and artifacts

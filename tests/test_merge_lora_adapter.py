@@ -1,6 +1,6 @@
 """
 Author: L. Saetta
-Date last modified: 2026-09-02
+Date last modified: 2026-09-03
 License: MIT
 Description: Unit tests for local validation helpers in the LoRA merge script.
 """
@@ -10,6 +10,7 @@ import json
 from pathlib import Path
 
 import pytest
+import torch
 
 import scripts.merge_lora_adapter as merge_script
 from scripts.merge_lora_adapter import (
@@ -109,4 +110,63 @@ def test_model_card_declares_base_model_without_local_paths(tmp_path: Path) -> N
     assert "base_model: Qwen/Qwen3-1.7B" in model_card
     assert "library_name: transformers" in model_card
     assert "Base model source | Local project artifact (path intentionally omitted)" in model_card
+    assert "Weight dtype | `bfloat16`" in model_card
     assert str(tmp_path) not in model_card
+
+
+def test_merge_model_loads_and_saves_bfloat16_weights(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """The merge keeps both the loaded and saved model weights in BF16."""
+
+    class FakeModel:
+        """Minimal model double for testing merge dtype arguments."""
+
+        def __init__(self) -> None:
+            self.config = argparse.Namespace(model_type="qwen3")
+            self.to_calls: list[tuple[tuple[object, ...], dict[str, object]]] = []
+            self.saved_directory: Path | None = None
+
+        def to(self, *args: object, **kwargs: object) -> "FakeModel":
+            self.to_calls.append((args, kwargs))
+            return self
+
+        def save_pretrained(self, output_directory: Path, safe_serialization: bool) -> None:
+            assert safe_serialization is True
+            self.saved_directory = output_directory
+
+    class FakeTokenizer:
+        """Minimal tokenizer double for testing local save behavior."""
+
+        def save_pretrained(self, _output_directory: Path) -> None:
+            return None
+
+    base_model = FakeModel()
+    merged_model = FakeModel()
+    model_load_kwargs: dict[str, object] = {}
+    adapter_load_kwargs: dict[str, object] = {}
+
+    class FakePeftModel:
+        """Minimal PEFT model double for testing merge options."""
+
+        def merge_and_unload(self, **kwargs: object) -> FakeModel:
+            assert kwargs == {"progressbar": True, "safe_merge": True}
+            return merged_model
+
+    def load_model(*_args: object, **kwargs: object) -> FakeModel:
+        model_load_kwargs.update(kwargs)
+        return base_model
+
+    def load_adapter(*_args: object, **kwargs: object) -> FakePeftModel:
+        adapter_load_kwargs.update(kwargs)
+        return FakePeftModel()
+
+    monkeypatch.setattr(merge_script.AutoTokenizer, "from_pretrained", lambda *_args, **_kwargs: FakeTokenizer())
+    monkeypatch.setattr(merge_script.AutoModelForCausalLM, "from_pretrained", load_model)
+    monkeypatch.setattr(merge_script.PeftModel, "from_pretrained", load_adapter)
+    monkeypatch.setattr(merge_script, "write_model_card", lambda *_args, **_kwargs: None)
+
+    merge_script.merge_model(tmp_path / "base", tmp_path / "adapter", tmp_path / "output", torch.device("cpu"))
+
+    assert model_load_kwargs["torch_dtype"] is torch.bfloat16
+    assert adapter_load_kwargs["autocast_adapter_dtype"] is False
+    assert merged_model.to_calls == [((), {"device": "cpu", "dtype": torch.bfloat16})]
+    assert merged_model.saved_directory == tmp_path / "output"

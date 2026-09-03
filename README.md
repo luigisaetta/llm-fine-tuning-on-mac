@@ -99,7 +99,7 @@ The default experiment uses Qwen3-1.7B, a LoRA adapter with rank 8 and alpha 16,
 
 ## Merge and publish a standalone model
 
-The LoRA adapter is normally the preferred local artifact because it is small and retains the base-model provenance. To create a standalone model, merge it into the local Qwen3-1.7B weights. The merge uses `float32`, defaults to CPU, and needs enough local memory for the base model, adapter, and merged weights. It writes only to a new or empty ignored directory.
+The LoRA adapter is normally the preferred local artifact because it is small and retains the base-model provenance. To create a standalone model, merge it into the local Qwen3-1.7B weights. The merge preserves `bfloat16`, defaults to CPU, and needs enough local memory for the base model, adapter, and merged weights. It writes only to a new or empty ignored directory.
 
 ```bash
 conda activate llm-fine-tuning-on-mac

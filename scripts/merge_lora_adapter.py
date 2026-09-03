@@ -1,6 +1,6 @@
 """
 Author: L. Saetta
-Date last modified: 2026-09-02
+Date last modified: 2026-09-03
 License: MIT
 Description: Merge a local Qwen3 base model with a LoRA adapter and optionally publish the standalone model to the Hugging Face Hub.
 """
@@ -14,6 +14,9 @@ import torch
 from huggingface_hub import HfApi
 from peft import PeftModel
 from transformers import AutoModelForCausalLM, AutoTokenizer
+
+
+MERGE_DTYPE = torch.bfloat16
 
 
 def find_project_root(start_directory: Path) -> Path:
@@ -147,6 +150,7 @@ This standalone Transformers model was created by merging a local LoRA adapter i
 | Base model revision | Not pinned |
 | LoRA adapter source | Local Demo 01 artifact (path intentionally omitted) |
 | Merge device | `{device.type}` |
+| Weight dtype | `bfloat16` |
 | Serialization | Safetensors |
 
 The source datasets are private and are not included in this repository or this model directory. Review the base model licence and the suitability of the fine-tuned behaviour before redistribution.
@@ -170,14 +174,19 @@ def merge_model(base_model_directory: Path, adapter_directory: Path, output_dire
     tokenizer = AutoTokenizer.from_pretrained(base_model_directory, local_files_only=True)
     base_model = AutoModelForCausalLM.from_pretrained(
         base_model_directory,
-        torch_dtype=torch.float32,
+        torch_dtype=MERGE_DTYPE,
         local_files_only=True,
     ).to(device)
     if base_model.config.model_type != "qwen3":
         raise RuntimeError(f"Expected a Qwen3 base model, got {base_model.config.model_type!r}.")
 
-    peft_model = PeftModel.from_pretrained(base_model, adapter_directory, local_files_only=True)
-    merged_model = peft_model.merge_and_unload(progressbar=True, safe_merge=True).to("cpu")
+    peft_model = PeftModel.from_pretrained(
+        base_model,
+        adapter_directory,
+        autocast_adapter_dtype=False,
+        local_files_only=True,
+    )
+    merged_model = peft_model.merge_and_unload(progressbar=True, safe_merge=True).to(device="cpu", dtype=MERGE_DTYPE)
     merged_model.save_pretrained(output_directory, safe_serialization=True)
     tokenizer.save_pretrained(output_directory)
     write_model_card(output_directory, device)

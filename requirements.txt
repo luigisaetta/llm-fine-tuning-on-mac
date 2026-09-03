@@ -1,6 +1,7 @@
 # Notebook experience
 jupyterlab>=4.4,<5
 ipywidgets>=8.1,<9
+matplotlib>=3.9,<4
 
 # Model loading and parameter-efficient fine-tuning
 torch>=2.5,<3

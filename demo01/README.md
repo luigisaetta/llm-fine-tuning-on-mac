@@ -17,4 +17,4 @@ jupyter lab
 
 Open [`demo01_lora_fine_tuning.ipynb`](demo01_lora_fine_tuning.ipynb), select the project kernel, review the dedicated configuration cell, and run cells in order. The notebook loads the Qwen3 base model and trains the LoRA adapter in BF16. It explicitly disables PEFT's default adapter upcast to FP32, then verifies the resulting floating-point parameter dtypes before training. BF16 training on MPS requires macOS 14 or later.
 
-The notebook evaluates loss at the end of each epoch and then measures deterministic answer quality on the held-out evaluation facts. All checkpoints and adapters are saved under ignored `artifacts/training/` paths.
+The notebook evaluates loss at the end of each epoch, plots the logged training and validation loss trends, and then measures deterministic answer quality on the held-out evaluation facts. All checkpoints and adapters are saved under ignored `artifacts/training/` paths.

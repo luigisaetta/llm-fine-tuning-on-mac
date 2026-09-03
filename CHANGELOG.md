@@ -9,6 +9,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Added
 
 * Added this project changelog for user-visible additions and significant changes.
+* Added a Demo 01 loss-trend chart with distinct training and validation loss series and a grid.
 
 ### Changed
 

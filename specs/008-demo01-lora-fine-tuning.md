@@ -6,7 +6,7 @@ The project needs a reproducible, Mac-first notebook that fine-tunes the local Q
 
 ## Scope
 
-Create `demo01/` containing a restartable Jupyter notebook and concise usage documentation. The notebook loads the local base model and ignored datasets, applies a PEFT LoRA adapter, trains with TRL SFT, evaluates loss at every epoch, measures held-out generative answer accuracy after training, and saves only adapter artifacts.
+Create `demo01/` containing a restartable Jupyter notebook and concise usage documentation. The notebook loads the local base model and ignored datasets, applies a PEFT LoRA adapter, trains with TRL SFT, evaluates loss at every epoch, plots the training and validation loss trends, measures held-out generative answer accuracy after training, and saves only adapter artifacts.
 
 ## Configuration baseline
 
@@ -30,6 +30,7 @@ Create `demo01/` containing a restartable Jupyter notebook and concise usage doc
 * Training uses a neutral system prompt and questions naming Luigi Saetta, as required by specification 007.
 * The evaluation split contains unseen paraphrases of facts included in training. It measures factual recall under question variation, rather than the model's ability to infer facts it was never trained on.
 * `eval_strategy="epoch"` and `save_strategy="epoch"` are mandatory. The trainer records `eval_loss` after every epoch and restores the adapter with the lowest evaluation loss.
+* After training, the notebook plots logged training loss and per-epoch validation loss with distinct colours, markers, labels, and a visible grid.
 * Final response accuracy is measured on the evaluation split by deterministic generation (`do_sample=False`). A response is correct when token-level F1 against the approved answer is at least 0.80; exact-match rate and mean token F1 are also reported.
 * The generative accuracy metric is complementary to `eval_loss`, not a replacement for it.
 * The notebook must load floating-point base-model parameters in `torch.bfloat16`, create the PEFT model with `autocast_adapter_dtype=False` so that trainable LoRA parameters remain BF16, enable `bf16=True` and `bf16_full_eval=True` in `SFTConfig`, and fail before training if any floating-point model or trainable LoRA parameter is not BF16.
@@ -47,6 +48,7 @@ Create `demo01/` containing a restartable Jupyter notebook and concise usage doc
 * LoRA, learning rate, epochs, batch settings, and device policy appear together in one editable configuration cell.
 * The configuration cell makes the BF16 dtype visible and reports the actual model and LoRA trainable-parameter dtypes before training.
 * Evaluation loss runs once per epoch.
+* The loss-trend chart shows both logged training loss and per-epoch validation loss with distinct colours and a grid.
 * The held-out generative metric uses only evaluation records and reports exact match, mean token F1, and threshold accuracy.
 * The saved output is a PEFT adapter rather than a duplicate base model.
 
@@ -55,4 +57,4 @@ Create `demo01/` containing a restartable Jupyter notebook and concise usage doc
 * Validate the notebook JSON and ensure it has no stored outputs.
 * Import its dependencies using the project Conda environment.
 * Before a full run, inspect selected device, model and trainable-parameter dtypes, trainable-parameter count, and dataset sizes. On MPS, run only on macOS 14 or later.
-* After a full run, inspect the epoch-level `eval_loss` table and manually review generated evaluation samples.
+* After a full run, inspect the loss-trend chart and epoch-level `eval_loss` table, then manually review generated evaluation samples.

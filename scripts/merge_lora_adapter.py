@@ -9,6 +9,7 @@ import argparse
 import json
 import os
 from pathlib import Path
+import shutil
 
 import torch
 from huggingface_hub import HfApi
@@ -117,12 +118,13 @@ def ensure_empty_output_directory(output_directory: Path) -> None:
     output_directory.mkdir(parents=True, exist_ok=True)
 
 
-def write_model_card(output_directory: Path, device: torch.device) -> None:
+def write_model_card(output_directory: Path, device: torch.device, oci_compat: bool = True) -> None:
     """Write provenance metadata for a locally merged standalone model.
 
     Args:
         output_directory: Directory containing the merged model.
         device: Device used for the merge operation.
+        oci_compat: Whether the merged config.json preserves the base-model configuration for OCI compatibility.
     """
     model_card = f"""---
 base_model: Qwen/Qwen3-1.7B
@@ -151,6 +153,7 @@ This standalone Transformers model was created by merging a local LoRA adapter i
 | LoRA adapter source | Local Demo 01 artifact (path intentionally omitted) |
 | Merge device | `{device.type}` |
 | Weight dtype | `bfloat16` |
+| OCI-compatible configuration | `{'Enabled' if oci_compat else 'Disabled'}` |
 | Serialization | Safetensors |
 
 The source datasets are private and are not included in this repository or this model directory. Review the base model licence and the suitability of the fine-tuned behaviour before redistribution.
@@ -162,7 +165,23 @@ This model may produce unsupported or incorrect information. Do not use it as a 
     (output_directory / "README.md").write_text(model_card, encoding="utf-8")
 
 
-def merge_model(base_model_directory: Path, adapter_directory: Path, output_directory: Path, device: torch.device) -> None:
+def preserve_base_model_config(base_model_directory: Path, output_directory: Path) -> None:
+    """Copy the base-model configuration for OCI imported-model compatibility.
+
+    Args:
+        base_model_directory: Directory containing the local Qwen3 base model.
+        output_directory: Directory containing the saved merged model.
+    """
+    shutil.copyfile(base_model_directory / "config.json", output_directory / "config.json")
+
+
+def merge_model(
+    base_model_directory: Path,
+    adapter_directory: Path,
+    output_directory: Path,
+    device: torch.device,
+    oci_compat: bool = True,
+) -> None:
     """Merge a local LoRA adapter into a local base model and save it.
 
     Args:
@@ -170,6 +189,7 @@ def merge_model(base_model_directory: Path, adapter_directory: Path, output_dire
         adapter_directory: Directory containing the saved LoRA adapter.
         output_directory: Empty destination directory for merged artifacts.
         device: Device used to load and merge model weights.
+        oci_compat: Whether to preserve the base-model config.json for OCI Generative AI import validation.
     """
     tokenizer = AutoTokenizer.from_pretrained(base_model_directory, local_files_only=True)
     base_model = AutoModelForCausalLM.from_pretrained(
@@ -188,8 +208,10 @@ def merge_model(base_model_directory: Path, adapter_directory: Path, output_dire
     )
     merged_model = peft_model.merge_and_unload(progressbar=True, safe_merge=True).to(device="cpu", dtype=MERGE_DTYPE)
     merged_model.save_pretrained(output_directory, safe_serialization=True)
+    if oci_compat:
+        preserve_base_model_config(base_model_directory, output_directory)
     tokenizer.save_pretrained(output_directory)
-    write_model_card(output_directory, device)
+    write_model_card(output_directory, device, oci_compat)
 
 
 def upload_model(output_directory: Path, repository_id: str, private: bool) -> str:
@@ -244,6 +266,15 @@ def parse_arguments() -> argparse.Namespace:
         help="New or empty local directory for the standalone merged model.",
     )
     parser.add_argument("--device", choices=("cpu", "mps"), default="cpu", help="Device used for merging.")
+    parser.add_argument(
+        "--oci-compat",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help=(
+            "Preserve the base model config.json for OCI Generative AI imported-model validation "
+            "(default: enabled)."
+        ),
+    )
     parser.add_argument("--push-to-hub", action="store_true", help="Upload the saved standalone model to the Hub.")
     parser.add_argument(
         "--upload-existing-output",
@@ -281,7 +312,8 @@ def main() -> None:
     print(f"LoRA adapter: {adapter_directory}")
     print(f"Output directory: {output_directory}")
     print(f"Merge device: {device}")
-    merge_model(base_model_directory, adapter_directory, output_directory, device)
+    print(f"OCI compatibility mode: {'enabled' if args.oci_compat else 'disabled'}")
+    merge_model(base_model_directory, adapter_directory, output_directory, device, args.oci_compat)
     print(f"Merged model saved to: {output_directory}")
 
     if args.push_to_hub:

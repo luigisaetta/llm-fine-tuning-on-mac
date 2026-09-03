@@ -111,7 +111,16 @@ def test_model_card_declares_base_model_without_local_paths(tmp_path: Path) -> N
     assert "library_name: transformers" in model_card
     assert "Base model source | Local project artifact (path intentionally omitted)" in model_card
     assert "Weight dtype | `bfloat16`" in model_card
+    assert "OCI-compatible configuration | `Enabled`" in model_card
     assert str(tmp_path) not in model_card
+
+
+def test_model_card_marks_disabled_oci_compatibility(tmp_path: Path) -> None:
+    """The model card reports when OCI compatibility mode is explicitly disabled."""
+    write_model_card(tmp_path, merge_script.torch.device("cpu"), oci_compat=False)
+
+    model_card = (tmp_path / "README.md").read_text(encoding="utf-8")
+    assert "OCI-compatible configuration | `Disabled`" in model_card
 
 
 def test_merge_model_loads_and_saves_bfloat16_weights(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -131,6 +140,8 @@ def test_merge_model_loads_and_saves_bfloat16_weights(tmp_path: Path, monkeypatc
 
         def save_pretrained(self, output_directory: Path, safe_serialization: bool) -> None:
             assert safe_serialization is True
+            output_directory.mkdir(parents=True, exist_ok=True)
+            (output_directory / "config.json").write_text('{"transformers_version": "new"}', encoding="utf-8")
             self.saved_directory = output_directory
 
     class FakeTokenizer:
@@ -164,9 +175,15 @@ def test_merge_model_loads_and_saves_bfloat16_weights(tmp_path: Path, monkeypatc
     monkeypatch.setattr(merge_script.PeftModel, "from_pretrained", load_adapter)
     monkeypatch.setattr(merge_script, "write_model_card", lambda *_args, **_kwargs: None)
 
-    merge_script.merge_model(tmp_path / "base", tmp_path / "adapter", tmp_path / "output", torch.device("cpu"))
+    base_model_directory = tmp_path / "base"
+    base_model_directory.mkdir()
+    base_config = '{"torch_dtype": "bfloat16", "transformers_version": "4.51.0"}'
+    (base_model_directory / "config.json").write_text(base_config, encoding="utf-8")
+
+    merge_script.merge_model(base_model_directory, tmp_path / "adapter", tmp_path / "output", torch.device("cpu"))
 
     assert model_load_kwargs["torch_dtype"] is torch.bfloat16
     assert adapter_load_kwargs["autocast_adapter_dtype"] is False
     assert merged_model.to_calls == [((), {"device": "cpu", "dtype": torch.bfloat16})]
     assert merged_model.saved_directory == tmp_path / "output"
+    assert (tmp_path / "output" / "config.json").read_text(encoding="utf-8") == base_config

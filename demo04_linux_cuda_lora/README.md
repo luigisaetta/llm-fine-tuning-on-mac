@@ -9,22 +9,19 @@ Install CUDA-enabled PyTorch appropriate for the NVIDIA driver and CUDA runtime 
 Install the following non-PyTorch packages in the environment that already contains CUDA-enabled PyTorch:
 
 ```bash
-python -m pip install \
-  "jupyterlab>=4.4,<5" \
-  "ipywidgets>=8.1,<9" \
-  "matplotlib>=3.9,<4" \
-  "huggingface_hub>=0.30,<1" \
-  "transformers>=4.51,<5" \
-  "peft>=0.15,<1" \
-  "accelerate>=1.4,<2" \
-  "datasets>=3.3,<4" \
-  "trl>=0.15,<1" \
-  "safetensors>=0.5,<1" \
-  "sentencepiece>=0.2,<1" \
-  "tqdm>=4.67,<5"
+python -m pip install "matplotlib>=3.9,<4"
+python -m pip install "huggingface_hub>=0.30,<1"
+python -m pip install "transformers>=4.51,<5"
+python -m pip install "peft>=0.15,<1"
+python -m pip install "accelerate>=1.4,<2"
+python -m pip install "datasets>=3.3,<4"
+python -m pip install "trl>=0.15,<1"
+python -m pip install "safetensors>=0.5,<1"
+python -m pip install "sentencepiece>=0.2,<1"
+python -m pip install "tqdm>=4.67,<5"
 ```
 
-`ipywidgets` is used by JupyterLab, and `tqdm` supports training progress reporting. No OCI, LangChain, or test-only package is required to run this notebook.
+`tqdm` supports training progress reporting. No OCI, LangChain, or test-only package is required to run this notebook.
 
 ## Local artifacts and paths
 
@@ -38,12 +35,6 @@ The defaults are project-relative paths under ignored `artifacts/`. Change them 
 
 ## Run
 
-From the repository root, start JupyterLab in the Linux Python environment:
-
-```bash
-jupyter lab
-```
-
-Open [demo04_lora_fine_tuning_linux_cuda.ipynb](demo04_lora_fine_tuning_linux_cuda.ipynb), review the path and training configuration cells, then run the notebook in order. The notebook stops before loading the model if CUDA or CUDA BF16 support is unavailable.
+Open [demo04_lora_fine_tuning_linux_cuda.ipynb](demo04_lora_fine_tuning_linux_cuda.ipynb) with your preferred notebook editor, review the path and training configuration cells, then run the notebook in order. The notebook stops before loading the model if CUDA or CUDA BF16 support is unavailable.
 
 The run evaluates validation loss after each epoch, saves only the LoRA adapter and tokenizer, plots training and validation losses, and reports held-out deterministic-generation metrics.

@@ -183,7 +183,17 @@ Before adding a notebook, script, model, or dataset, read the relevant document 
 
 ## Dependency choices
 
-`transformers` loads Qwen models and provides the training interfaces; `peft` adds LoRA adapters; `torch` executes training; `accelerate` coordinates device and mixed-precision settings; `datasets` provides dataset handling; `trl` supplies supervised fine-tuning utilities; and JupyterLab supports the interactive lessons. `safetensors` and `sentencepiece` cover common model artifact and tokenizer requirements.
+| Library | Contribution to this project |
+| --- | --- |
+| `transformers` | Loads Qwen models and provides model and training interfaces. |
+| `peft` | Adds LoRA adapters for parameter-efficient fine-tuning. |
+| `torch` | Executes model training and inference, including MPS operations. |
+| `accelerate` | Coordinates device placement and mixed-precision execution. |
+| `datasets` | Loads and handles training and evaluation datasets. |
+| `trl` | Supplies supervised fine-tuning utilities. |
+| JupyterLab | Provides the interactive notebook environment for the learning demos. |
+| `safetensors` | Handles safe model and adapter weight artifacts. |
+| `sentencepiece` | Supports compatible tokenizer requirements. |
 
 Version ranges intentionally keep the initial project compatible with Qwen 3-era Transformers releases while avoiding unreviewed major upgrades. Pin exact versions in a future training-run specification when strict experiment reproducibility is needed.
 

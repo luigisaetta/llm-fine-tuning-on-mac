@@ -6,6 +6,8 @@ This repository is a hands-on, spec-driven project for fine-tuning a small model
 
 > The aim is not merely to launch training. It is to make the decisions behind a reliable local fine-tuning workflow visible: data format, prompt template, memory limits, LoRA configuration, evaluation, and adapter-based inference.
 
+![Fine-tuning an LLM workflow overview](images/image-for-first-article.png)
+
 ## What you will build
 
 The project will guide you through a small, practical workflow:

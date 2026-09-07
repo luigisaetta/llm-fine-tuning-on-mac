@@ -1,5 +1,11 @@
 # Downloaded Hugging Face models and local run outputs
 artifacts/
+# Ticket-classification datasets are synthetic and version-controlled.
+!ticket-classification/
+!ticket-classification/artifacts/
+!ticket-classification/artifacts/datasets/
+!ticket-classification/artifacts/datasets/*.jsonl
+ticket-classification/artifacts/fine-tuned-models/
 pdf/
 .DS_Store
 __pycache__/

@@ -9,6 +9,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Added
 
 * Added this project changelog for user-visible additions and significant changes.
+* Added synthetic ticket-classification training, validation, and held-out test datasets.
+* Added the ticket-classification training and evaluation specification with a local-artifact usage guide.
 * Added a visual workflow overview to the root README.
 * Added Demo 05, an MPS-only direct comparison of Qwen3-1.7B base-model and Demo 01 LoRA-adapter validation performance using the same generative metrics.
 * Added a Demo 01 loss-trend chart with distinct training and validation loss series and a grid.

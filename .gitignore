@@ -6,6 +6,7 @@ artifacts/
 !ticket-classification/artifacts/datasets/
 !ticket-classification/artifacts/datasets/*.jsonl
 ticket-classification/artifacts/fine-tuned-models/
+ticket-classification/artifacts/models/
 pdf/
 .DS_Store
 __pycache__/

@@ -10,6 +10,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 * Added this project changelog for user-visible additions and significant changes.
 * Added synthetic ticket-classification training, validation, and held-out test datasets.
+* Added Demo 06, BF16 MPS LoRA training of Qwen3-1.7B for structured IT-support ticket classification with per-epoch validation loss and a loss-trend chart.
 * Added the ticket-classification training and evaluation specification with a local-artifact usage guide.
 * Added a visual workflow overview to the root README.
 * Added Demo 05, an MPS-only direct comparison of Qwen3-1.7B base-model and Demo 01 LoRA-adapter validation performance using the same generative metrics.
@@ -20,6 +21,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+* 2026-09-08: Updated Demo 06 checkpoint selection to maximize validation category-and-severity accuracy.
+* Updated Demo 06 to use version 2 of the synthetic ticket-classification training and validation datasets.
+* Added batched, cached per-epoch validation generation metrics to Demo 06 without changing its training configuration.
 * Reformatted the README dependency overview as a library-to-contribution table.
 * Updated Demo 01 LoRA fine-tuning to load the Qwen3 base model and trainable adapter parameters in BF16, enable BF16 training and evaluation, and require compatible MPS and macOS 14 or later.
 * Updated the standalone LoRA merge workflow to save BF16 model weights, matching the Qwen3 base model and Demo 01 adapter training.

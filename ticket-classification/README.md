@@ -1,6 +1,6 @@
 # Ticket Classification Fine-Tuning
 
-This directory will contain a Mac-first LoRA fine-tuning demo for structured IT-support ticket classification. Starting from the local `Qwen/Qwen3-1.7B` base model, the future notebook will train an adapter to classify each ticket and return a concise JSON result.
+This directory contains a Mac-first LoRA fine-tuning demo for structured IT-support ticket classification. Starting from the local `Qwen/Qwen3-1.7B` base model, it trains an adapter to classify each ticket and return a concise JSON result.
 
 ## Expected model output
 
@@ -21,20 +21,30 @@ The response must be JSON only. Categories are limited to `APP-01`, `AUTH-01`, `
 
   | File | Purpose | Records at specification time |
   | --- | --- | ---: |
-  | `train_dataset.jsonl` | LoRA training | 1,000 |
-  | `validation_dataset.jsonl` | Per-epoch validation and best-checkpoint selection | 200 |
+  | `train_dataset_v2.jsonl` | LoRA training | 1,000 |
+  | `validation_dataset_v2.jsonl` | Per-epoch validation and best-checkpoint selection | 200 |
   | `test_dataset.jsonl` | Final held-out evaluation only | 200 |
 
 * Use the `llm-fine-tuning-on-mac` Conda environment on macOS 14 or later with an available MPS backend.
 
 The supplied datasets are synthetic and version-controlled. Training outputs remain local, ignored artifacts. Do not place ticket text or generated responses in the committed notebook.
 
-## Planned workflow
+## Training workflow
 
-1. Validate the three dataset splits and their JSON response schema.
+1. Validate the training and validation splits and their JSON response schema.
 2. Fine-tune a BF16 LoRA adapter on training records.
-3. Measure validation loss at the end of every epoch and restore the best adapter.
-4. Evaluate the restored adapter once on the held-out test split.
-5. Report JSON validity, category and severity accuracy, joint-label accuracy, exact structured-response accuracy, and summary token F1.
+3. Measure validation loss and deterministic category, severity, joint-label, and valid-JSON metrics at the end of every epoch, then restore the adapter with the highest category-and-severity accuracy.
+4. Save the restored best-validation-loss adapter and tokenizer below `artifacts/models/` in this directory.
 
-The full behavioural and evaluation contract is defined in [specification 015](../specs/015-ticket-classification-lora-fine-tuning.md). The training notebook has not been added yet.
+The held-out test evaluation is deliberately deferred to a later demo. It will report JSON validity, category and severity accuracy, joint-label accuracy, exact structured-response accuracy, and summary token F1 without using the test split for model selection.
+
+From the repository root, activate the project environment and start JupyterLab:
+
+```bash
+conda activate llm-fine-tuning-on-mac
+jupyter lab
+```
+
+Open [demo06_ticket_classification_lora_fine_tuning.ipynb](demo06_ticket_classification_lora_fine_tuning.ipynb), select the project kernel, review the configuration cell, and run the cells in order.
+
+The full behavioural and evaluation contract is defined in [specification 015](../specs/015-ticket-classification-lora-fine-tuning.md).

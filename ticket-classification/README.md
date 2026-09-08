@@ -34,9 +34,11 @@ The supplied datasets are synthetic and version-controlled. Training outputs rem
 1. Validate the training and validation splits and their JSON response schema.
 2. Fine-tune a BF16 LoRA adapter on training records.
 3. Measure validation loss and deterministic category, severity, joint-label, and valid-JSON metrics at the end of every epoch, then restore the adapter with the highest category-and-severity accuracy.
-4. Save the restored best-validation-loss adapter and tokenizer below `artifacts/models/` in this directory.
+4. Save the restored best-joint-accuracy adapter and tokenizer below `artifacts/models/` in this directory.
 
-The held-out test evaluation is deliberately deferred to a later demo. It will report JSON validity, category and severity accuracy, joint-label accuracy, exact structured-response accuracy, and summary token F1 without using the test split for model selection.
+## Held-out test evaluation
+
+[Demo 07](demo07_ticket_classification_test_evaluation.ipynb) loads the adapter saved by Demo 06 and evaluates it only on `test_dataset.jsonl`. It reports Category Accuracy, Severity Accuracy, Category+Severity Accuracy, and Valid JSON Rate. The test split is never used for training or checkpoint selection.
 
 From the repository root, activate the project environment and start JupyterLab:
 
@@ -46,5 +48,7 @@ jupyter lab
 ```
 
 Open [demo06_ticket_classification_lora_fine_tuning.ipynb](demo06_ticket_classification_lora_fine_tuning.ipynb), select the project kernel, review the configuration cell, and run the cells in order.
+
+After Demo 06 completes, open [demo07_ticket_classification_test_evaluation.ipynb](demo07_ticket_classification_test_evaluation.ipynb) in the same kernel environment and run it in order.
 
 The full behavioural and evaluation contract is defined in [specification 015](../specs/015-ticket-classification-lora-fine-tuning.md).

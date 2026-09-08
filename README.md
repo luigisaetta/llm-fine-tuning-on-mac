@@ -107,6 +107,10 @@ The default experiment uses Qwen3-1.7B, a LoRA adapter with rank 8 and alpha 16,
 
 [demo05/](demo05/) directly compares the original Qwen3-1.7B and the Demo 01 LoRA adapter on the same held-out validation records. It requires MPS, reuses Demo 01's deterministic exact-match and token-F1 metrics, and reports each score alongside the fine-tuned-minus-base delta.
 
+### Demos 06 and 07 — ticket-classification training and test evaluation
+
+[ticket-classification/](ticket-classification/) contains BF16 MPS LoRA training for synthetic IT-support tickets and a separate held-out test evaluation notebook. Demo 06 selects the adapter with the greatest validation Category+Severity Accuracy; Demo 07 loads that saved adapter and reports held-out category, severity, joint-label, and valid-JSON metrics.
+
 ## Merge and publish a standalone model
 
 The LoRA adapter is normally the preferred local artifact because it is small and retains the base-model provenance. To create a standalone model, merge it into the local Qwen3-1.7B weights. The merge preserves `bfloat16`, defaults to CPU, and needs enough local memory for the base model, adapter, and merged weights. It writes only to a new or empty ignored directory. OCI compatibility is enabled by default: the result retains the base model's `config.json`, including the architecture metadata and declared Transformers version, for OCI Generative AI imported-model validation.
@@ -162,6 +166,7 @@ Future hypotheses for improving factual recall are recorded in [experiments/READ
 ├── demo02/          # Fine-tuned LoRA adapter inference notebook
 ├── demo03/          # LangChain inference against an OCI dedicated endpoint
 ├── demo05/          # MPS base-model versus LoRA-adapter validation comparison
+├── ticket-classification/ # Structured IT-support ticket classification demos
 ├── experiments/     # Proposed follow-up experiments
 ├── dataset_preparation/  # ChatGPT-assisted CV-to-Q&A dataset guide
 ├── specs/          # Behaviour, constraints, and acceptance criteria

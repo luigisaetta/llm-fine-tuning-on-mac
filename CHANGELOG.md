@@ -9,6 +9,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Added
 
 * Added this project changelog for user-visible additions and significant changes.
+* 2026-09-08: Added Demo 07 for held-out ticket-classification test evaluation of the saved LoRA adapter.
 * Added synthetic ticket-classification training, validation, and held-out test datasets.
 * Added Demo 06, BF16 MPS LoRA training of Qwen3-1.7B for structured IT-support ticket classification with per-epoch validation loss and a loss-trend chart.
 * Added the ticket-classification training and evaluation specification with a local-artifact usage guide.

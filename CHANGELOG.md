@@ -22,6 +22,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+* 2026-09-08: Updated the synthetic ticket-classification validation dataset.
 * 2026-09-08: Updated Demo 06 checkpoint selection to maximize validation category-and-severity accuracy.
 * Updated Demo 06 to use version 2 of the synthetic ticket-classification training and validation datasets.
 * Added batched, cached per-epoch validation generation metrics to Demo 06 without changing its training configuration.

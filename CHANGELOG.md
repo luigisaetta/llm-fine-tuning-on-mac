@@ -8,6 +8,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+* 2026-09-09: Added Demo 08, a deterministic severity dataset-shift analysis for ticket-classification validation V2 and held-out test data.
 * Added this project changelog for user-visible additions and significant changes.
 * 2026-09-08: Added Demo 07 for held-out ticket-classification test evaluation of the saved LoRA adapter.
 * Added synthetic ticket-classification training, validation, and held-out test datasets.

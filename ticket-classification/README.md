@@ -40,6 +40,10 @@ The supplied datasets are synthetic and version-controlled. Training outputs rem
 
 [Demo 07](demo07_ticket_classification_test_evaluation.ipynb) evaluates both the original Qwen3-1.7B base model and the adapter saved by Demo 06 on the same `test_dataset.jsonl` records. It presents Category Accuracy, Severity Accuracy, Category+Severity Accuracy, and Valid JSON Rate with the fine-tuned-minus-base delta, while a progress bar shows evaluation progress. Its final cell lets you choose one test-record index and visually compare the ticket, fine-tuned JSON response, and expected JSON. The test split is never used for training or checkpoint selection.
 
+## Severity dataset-shift analysis
+
+[Demo 08](demo08_severity_dataset_shift_analysis.ipynb) is a deterministic, model-free comparison of validation V2 and test data. It helps investigate a validation-to-test severity-accuracy drop through severity prevalence, ticket length, category-conditioned label distributions, lexical cue overlap, and exact duplicate checks. Its visualizations and final checklist identify potential dataset-shift hypotheses rather than claiming a causal explanation.
+
 From the repository root, activate the project environment and start JupyterLab:
 
 ```bash

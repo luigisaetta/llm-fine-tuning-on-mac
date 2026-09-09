@@ -6,9 +6,9 @@ IT-support tickets must be classified consistently into a predefined category an
 
 ## Scope
 
-Demo 06 is a restartable training notebook at `ticket-classification/demo06_ticket_classification_lora_fine_tuning.ipynb`. Demo 07 is a separate held-out evaluation notebook at `ticket-classification/demo07_ticket_classification_test_evaluation.ipynb`. Both reuse the Qwen3-1.7B local model and the BF16 MPS LoRA approach of Demo 01.
+Demo 06 is a restartable training notebook at `ticket-classification/demo06_ticket_classification_lora_fine_tuning.ipynb`. Demo 07 is a separate held-out evaluation notebook at `ticket-classification/demo07_ticket_classification_test_evaluation.ipynb`. Demo 08 is a deterministic dataset-shift analysis notebook at `ticket-classification/demo08_severity_dataset_shift_analysis.ipynb`. Demos 06 and 07 reuse the Qwen3-1.7B local model and the BF16 MPS LoRA approach of Demo 01.
 
-This specification covers dataset validation, prompt/completion formatting, per-epoch validation during training, held-out test evaluation after training, adapter artifacts, and structured-output scoring. It does not cover a production ticketing integration, API deployment, automatic remediation, or full-parameter fine-tuning.
+This specification covers dataset validation, prompt/completion formatting, per-epoch validation during training, held-out test evaluation after training, adapter artifacts, structured-output scoring, and deterministic severity dataset-shift analysis. It does not cover a production ticketing integration, API deployment, automatic remediation, or full-parameter fine-tuning.
 
 ## Dataset contract
 
@@ -67,6 +67,10 @@ Demo 06 intentionally loads only training and validation data. Demo 07 loads onl
 
 For all label metrics, an invalid response counts as incorrect. Use deterministic, batched generation with left padding, a visible `tqdm` progress bar, and the generation KV cache enabled. Evaluate the base model first, release its MPS memory, then load the adapter for evaluation. The notebook may display one user-selected test record interactively with its ticket text, generated JSON, and expected JSON for a manual visual check, but must not store that content in committed output.
 
+## Severity dataset-shift analysis contract
+
+Demo 08 loads only `validation_dataset_v2.jsonl` and `test_dataset.jsonl`; it must not load a model or modify either dataset. It validates the record schema and produces deterministic descriptive analyses of severity-label prevalence, exact cross-split ticket duplicates, ticket-length features, `P(severity | category)` differences, and severity-specific lexical cue overlap. It must show tables and useful Matplotlib visualizations, including severity distribution bars, ticket-length distributions, and a category-conditioned severity heatmap. Its final diagnostic summary may identify evidence consistent with dataset shift, but must clearly state that the analysis does not prove causality for a model-accuracy difference. No dataset text or calculated output may be stored in the committed notebook.
+
 ## Acceptance criteria
 
 * The notebook validates all required local model, adapter-output, and dataset paths before loading a model.
@@ -74,6 +78,7 @@ For all label metrics, an invalid response counts as incorrect. Use deterministi
 * The configuration and actual device, dtype, dataset-size, trainable-parameter information, and joint-accuracy checkpoint-selection policy are visible before training begins.
 * Validation loss and task-specific metrics run at every epoch, and the best adapter is restored by maximum category-and-severity accuracy.
 * Demo 06 loads only training and validation data; Demo 07 loads only the test split and compares the original base model with the saved adapter using the same metrics.
+* Demo 08 loads only validation V2 and test data, has no model dependency, and makes its severity-shift methods and non-causal interpretation explicit.
 * The notebook has no stored outputs, execution counts, ticket texts, credentials, datasets, model weights, or generated artifacts.
 * Proportionate tests parse the notebook and validate its split usage, BF16/MPS policy, output schema checks, and no-output policy without loading a model or dataset.
 

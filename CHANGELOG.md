@@ -22,6 +22,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+* 2026-09-09: Updated Demo 07 to compare Qwen3-1.7B baseline and fine-tuned-adapter test metrics, and added an interactive expected-versus-generated JSON inspection cell.
 * 2026-09-08: Updated the synthetic ticket-classification validation dataset.
 * 2026-09-08: Updated Demo 06 checkpoint selection to maximize validation category-and-severity accuracy.
 * Updated Demo 06 to use version 2 of the synthetic ticket-classification training and validation datasets.

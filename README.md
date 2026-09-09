@@ -109,7 +109,7 @@ The default experiment uses Qwen3-1.7B, a LoRA adapter with rank 8 and alpha 16,
 
 ### Demos 06 and 07 — ticket-classification training and test evaluation
 
-[ticket-classification/](ticket-classification/) contains BF16 MPS LoRA training for synthetic IT-support tickets and a separate held-out test evaluation notebook. Demo 06 selects the adapter with the greatest validation Category+Severity Accuracy; Demo 07 loads that saved adapter and reports held-out category, severity, joint-label, and valid-JSON metrics.
+[ticket-classification/](ticket-classification/) contains BF16 MPS LoRA training for synthetic IT-support tickets and a separate held-out test evaluation notebook. Demo 06 selects the adapter with the greatest validation Category+Severity Accuracy; Demo 07 compares the original base model and saved adapter on held-out category, severity, joint-label, and valid-JSON metrics.
 
 ## Merge and publish a standalone model
 

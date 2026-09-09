@@ -1,6 +1,6 @@
 """
 Author: L. Saetta
-Date last modified: 2026-09-08
+Date last modified: 2026-09-09
 License: MIT
 Description: Static tests for the ticket-classification held-out test evaluation notebook.
 """
@@ -20,6 +20,8 @@ def test_held_out_evaluation_notebook_uses_only_test_data() -> None:
     assert "test_dataset.jsonl" in source
     assert "train_dataset" not in source
     assert "validation_dataset" not in source
+    assert "base_model_metrics" in source
+    assert "fine_tuned_metrics" in source
     assert "PeftModel.from_pretrained" in source
     assert "model.generate" in source
     assert "category_accuracy" in source
@@ -27,3 +29,6 @@ def test_held_out_evaluation_notebook_uses_only_test_data() -> None:
     assert "joint_accuracy" in source
     assert "valid_json_rate" in source
     assert "use_cache=True" in source
+    assert "TEST_RECORD_INDEX" in source
+    assert "Fine-tuned response" in source
+    assert "Expected response" in source

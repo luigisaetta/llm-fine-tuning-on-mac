@@ -58,14 +58,14 @@ Key order and whitespace are not scored. The category and severity must be allow
 
 ## Held-out test evaluation contract
 
-Demo 06 intentionally loads only training and validation data. Demo 07 restores the saved best adapter, loads only the test split, and evaluates every test record once. The test split must not influence training, checkpoint selection, early stopping, hyperparameter selection, or prompt changes. Demo 07 reports:
+Demo 06 intentionally loads only training and validation data. Demo 07 loads only the test split and evaluates every test record once with both the original Qwen3-1.7B base model and the saved best adapter. The test split must not influence training, checkpoint selection, early stopping, hyperparameter selection, or prompt changes. Demo 07 reports a direct base-model-versus-adapter comparison for:
 
 * valid-JSON rate;
 * category accuracy;
 * severity accuracy;
 * joint category-and-severity accuracy.
 
-For all label metrics, an invalid response counts as incorrect. Use deterministic, batched generation with left padding and the generation KV cache enabled. Report aggregate numbers only; the notebook must not store ticket text or generated responses.
+For all label metrics, an invalid response counts as incorrect. Use deterministic, batched generation with left padding and the generation KV cache enabled. Evaluate the base model first, release its MPS memory, then load the adapter for evaluation. The notebook may display one user-selected test record interactively with its generated and expected JSON for a manual visual check, but must not store that ticket text or either response in committed output.
 
 ## Acceptance criteria
 
@@ -73,7 +73,7 @@ For all label metrics, an invalid response counts as incorrect. Use deterministi
 * It validates schema, label sets, empty values, duplicate records, and cross-split exact ticket overlap without printing ticket content.
 * The configuration and actual device, dtype, dataset-size, trainable-parameter information, and joint-accuracy checkpoint-selection policy are visible before training begins.
 * Validation loss and task-specific metrics run at every epoch, and the best adapter is restored by maximum category-and-severity accuracy.
-* Demo 06 loads only training and validation data; Demo 07 loads only the test split and the saved adapter.
+* Demo 06 loads only training and validation data; Demo 07 loads only the test split and compares the original base model with the saved adapter using the same metrics.
 * The notebook has no stored outputs, execution counts, ticket texts, credentials, datasets, model weights, or generated artifacts.
 * Proportionate tests parse the notebook and validate its split usage, BF16/MPS policy, output schema checks, and no-output policy without loading a model or dataset.
 

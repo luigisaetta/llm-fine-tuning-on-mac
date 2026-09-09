@@ -38,7 +38,7 @@ The supplied datasets are synthetic and version-controlled. Training outputs rem
 
 ## Held-out test evaluation
 
-[Demo 07](demo07_ticket_classification_test_evaluation.ipynb) evaluates both the original Qwen3-1.7B base model and the adapter saved by Demo 06 on the same `test_dataset.jsonl` records. It presents Category Accuracy, Severity Accuracy, Category+Severity Accuracy, and Valid JSON Rate with the fine-tuned-minus-base delta. Its final cell lets you choose one test-record index and visually compare the fine-tuned JSON response with the expected JSON. The test split is never used for training or checkpoint selection.
+[Demo 07](demo07_ticket_classification_test_evaluation.ipynb) evaluates both the original Qwen3-1.7B base model and the adapter saved by Demo 06 on the same `test_dataset.jsonl` records. It presents Category Accuracy, Severity Accuracy, Category+Severity Accuracy, and Valid JSON Rate with the fine-tuned-minus-base delta, while a progress bar shows evaluation progress. Its final cell lets you choose one test-record index and visually compare the ticket, fine-tuned JSON response, and expected JSON. The test split is never used for training or checkpoint selection.
 
 From the repository root, activate the project environment and start JupyterLab:
 

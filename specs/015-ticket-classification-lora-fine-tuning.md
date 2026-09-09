@@ -65,7 +65,7 @@ Demo 06 intentionally loads only training and validation data. Demo 07 loads onl
 * severity accuracy;
 * joint category-and-severity accuracy.
 
-For all label metrics, an invalid response counts as incorrect. Use deterministic, batched generation with left padding and the generation KV cache enabled. Evaluate the base model first, release its MPS memory, then load the adapter for evaluation. The notebook may display one user-selected test record interactively with its generated and expected JSON for a manual visual check, but must not store that ticket text or either response in committed output.
+For all label metrics, an invalid response counts as incorrect. Use deterministic, batched generation with left padding, a visible `tqdm` progress bar, and the generation KV cache enabled. Evaluate the base model first, release its MPS memory, then load the adapter for evaluation. The notebook may display one user-selected test record interactively with its ticket text, generated JSON, and expected JSON for a manual visual check, but must not store that content in committed output.
 
 ## Acceptance criteria
 

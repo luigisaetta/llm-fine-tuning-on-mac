@@ -29,6 +29,9 @@ def test_held_out_evaluation_notebook_uses_only_test_data() -> None:
     assert "joint_accuracy" in source
     assert "valid_json_rate" in source
     assert "use_cache=True" in source
+    assert "from tqdm.auto import tqdm" in source
+    assert "progress_bar.update" in source
     assert "TEST_RECORD_INDEX" in source
+    assert "ticket_text" in source
     assert "Fine-tuned response" in source
     assert "Expected response" in source

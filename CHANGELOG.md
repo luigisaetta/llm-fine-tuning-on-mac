@@ -8,6 +8,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+* 2026-09-13: Added Demo 09, a Linux/CUDA BF16 LoRA fine-tuning notebook for ticket classification with explicit CUDA GPU diagnostics and centrally editable dataset and adapter-output directories.
 * 2026-09-09: Added Demo 08, a deterministic severity dataset-shift analysis for ticket-classification validation V2 and held-out test data.
 * Added this project changelog for user-visible additions and significant changes.
 * 2026-09-08: Added Demo 07 for held-out ticket-classification test evaluation of the saved LoRA adapter.

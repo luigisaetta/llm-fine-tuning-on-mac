@@ -36,6 +36,16 @@ The supplied datasets are synthetic and version-controlled. Training outputs rem
 3. Measure validation loss and deterministic category, severity, joint-label, and valid-JSON metrics at the end of every epoch, then restore the adapter with the highest category-and-severity accuracy.
 4. Save the restored best-joint-accuracy adapter and tokenizer below `artifacts/models/` in this directory.
 
+## Linux CUDA training workflow
+
+[Demo 09](demo09_ticket_classification_lora_fine_tuning_linux_cuda.ipynb) is the Linux-only counterpart to Demo 06. It requires CUDA-enabled PyTorch and one NVIDIA GPU with BF16 support; it deliberately has no CPU or MPS fallback. Its clearly marked first configuration cell is where to set:
+
+* `DATASET_DIRECTORY`, containing `train_dataset_v2.jsonl` and `validation_dataset_v2.jsonl`;
+* `TRAINING_OUTPUT_DIRECTORY`, the base directory in which the LoRA adapter, checkpoints, logs, tokenizer, and metadata are saved; and
+* `MODEL_DIRECTORY`, the local `Qwen/Qwen3-1.7B` model directory.
+
+Run the dedicated CUDA diagnostics cell before loading the model. It stops with an actionable error unless CUDA and CUDA BF16 are available, and shows the selected GPU and CUDA runtime details. The required non-PyTorch Python packages are the same as in `requirements.txt`; install CUDA-enabled PyTorch appropriate to the target host separately.
+
 ## Held-out test evaluation
 
 [Demo 07](demo07_ticket_classification_test_evaluation.ipynb) evaluates both the original Qwen3-1.7B base model and the adapter saved by Demo 06 on the same `test_dataset.jsonl` records. It presents Category Accuracy, Severity Accuracy, Category+Severity Accuracy, and Valid JSON Rate with the fine-tuned-minus-base delta, while a progress bar shows evaluation progress. Its final cell lets you choose one test-record index and visually compare the ticket, fine-tuned JSON response, and expected JSON. The test split is never used for training or checkpoint selection.
@@ -56,3 +66,4 @@ Open [demo06_ticket_classification_lora_fine_tuning.ipynb](demo06_ticket_classif
 After Demo 06 completes, open [demo07_ticket_classification_test_evaluation.ipynb](demo07_ticket_classification_test_evaluation.ipynb) in the same kernel environment and run it in order.
 
 The full behavioural and evaluation contract is defined in [specification 015](../specs/015-ticket-classification-lora-fine-tuning.md).
+The Linux CUDA variant is defined in [specification 016](../specs/016-demo09-linux-cuda-ticket-classification.md).

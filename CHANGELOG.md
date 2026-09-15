@@ -25,6 +25,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+* 2026-09-15: Moved OCI AI Data Platform training checkpoints and intermediate artifacts to `/tmp`; the completed adapter is now copied and verified on the Object Storage-mounted volume only after training finishes.
 * 2026-09-09: Added test-evaluation progress bars and a selected-ticket display to Demo 07.
 * 2026-09-09: Updated Demo 07 to compare Qwen3-1.7B baseline and fine-tuned-adapter test metrics, and added an interactive expected-versus-generated JSON inspection cell.
 * 2026-09-08: Updated the synthetic ticket-classification validation dataset.

@@ -73,6 +73,30 @@ def test_header_preflight_preserves_existing_include_paths() -> None:
     assert "if existing_cpath else" in preflight_source
 
 
+def test_training_uses_local_checkpoints_and_copies_only_final_adapter() -> None:
+    """Require checkpoints to stay local until final adapter export completes."""
+    notebook = load_notebook()
+    source = "\n".join("".join(cell["source"]) for cell in notebook["cells"])
+    final_source = "".join(notebook["cells"][-1]["source"])
+
+    assert "LOCAL_TRAINING_OUTPUT_DIR = Path('/tmp')" in source
+    assert "SFTConfig(output_dir=str(LOCAL_TRAINING_OUTPUT_DIR)" in source
+    assert "trainer.save_model(LOCAL_ADAPTER_OUTPUT_DIR)" in source
+    assert "tokenizer.save_pretrained(LOCAL_ADAPTER_OUTPUT_DIR)" in source
+    assert "shutil.copytree(LOCAL_ADAPTER_OUTPUT_DIR, REMOTE_ADAPTER_OUTPUT_DIR" in final_source
+    assert "copy_errors" in final_source
+    assert "best_model_checkpoint" not in final_source
+
+
+def test_training_notebook_is_output_free() -> None:
+    """Require committed OCI training notebooks to be restartable without prior output."""
+    notebook = load_notebook()
+    code_cells = [cell for cell in notebook["cells"] if cell["cell_type"] == "code"]
+
+    assert all(cell["execution_count"] is None for cell in code_cells)
+    assert all(cell["outputs"] == [] for cell in code_cells)
+
+
 def test_storage_inspection_notebook_is_non_training_and_restartable() -> None:
     """Require storage inspection to be output-free and limited to diagnostics."""
     notebook = json.loads(STORAGE_NOTEBOOK_PATH.read_text(encoding="utf-8"))

@@ -48,7 +48,7 @@ Run the dedicated CUDA diagnostics cell before loading the model. It stops with 
 
 ## OCI AI Data Platform training workflow
 
-The OCI AI Data Platform notebooks are in [ai-dp](ai-dp/). First run `inspect_local_training_storage.ipynb` on the OCI workspace node to identify a local, writable directory with enough capacity for transient checkpoints; do not use the Object Storage-mounted volume for that purpose. Then run `fix_system_environment.ipynb` to extract the Python 3.11 development headers from the supplied RPM. In `nb_fine_tuning_lora.ipynb`, run the dedicated header preflight cell immediately before the training cell. It verifies `Python.h` and sets `C_INCLUDE_PATH` and `CPATH` for the compiler used by Triton during `trainer.train()`.
+The OCI AI Data Platform notebooks are in [ai-dp](ai-dp/). First run `inspect_local_training_storage.ipynb` on the OCI workspace node to confirm that `/tmp` has enough capacity for transient checkpoints. Then run `fix_system_environment.ipynb` to extract the Python 3.11 development headers from the supplied RPM. In `nb_fine_tuning_lora.ipynb`, run the dedicated header preflight cell immediately before the training cell. It verifies `Python.h` and sets `C_INCLUDE_PATH` and `CPATH` for the compiler used by Triton during `trainer.train()`. Checkpoints, logs, and the temporary adapter are saved under `/tmp/oci-ai-dp-ticket-classification/`; after training has restored the best checkpoint, the notebook copies and verifies only the completed adapter on the Object Storage-mounted volume.
 
 ## Held-out test evaluation
 

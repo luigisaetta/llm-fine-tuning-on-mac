@@ -8,6 +8,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+* 2026-09-15: Added an OCI AI Data Platform notebook to inspect local candidate storage before selecting a training-checkpoint directory.
 * 2026-09-13: Added Demo 09, a Linux/CUDA BF16 LoRA fine-tuning notebook for ticket classification with explicit CUDA GPU diagnostics and centrally editable dataset and adapter-output directories.
 * 2026-09-09: Added Demo 08, a deterministic severity dataset-shift analysis for ticket-classification validation V2 and held-out test data.
 * Added this project changelog for user-visible additions and significant changes.
@@ -37,4 +38,5 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+* 2026-09-15: Configured OCI AI Data Platform ticket-classification training with the extracted Python 3.11 header path before Triton compilation starts.
 * Prevented PEFT from silently upcasting Demo 01 LoRA adapter parameters to FP32, which caused the BF16 dtype validation to fail before training.

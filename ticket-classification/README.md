@@ -46,6 +46,10 @@ The supplied datasets are synthetic and version-controlled. Training outputs rem
 
 Run the dedicated CUDA diagnostics cell before loading the model. It stops with an actionable error unless CUDA and CUDA BF16 are available, and shows the selected GPU and CUDA runtime details. The required non-PyTorch Python packages are the same as in `requirements.txt`; install CUDA-enabled PyTorch appropriate to the target host separately.
 
+## OCI AI Data Platform training workflow
+
+The OCI AI Data Platform notebooks are in [ai-dp](ai-dp/). First run `inspect_local_training_storage.ipynb` on the OCI workspace node to identify a local, writable directory with enough capacity for transient checkpoints; do not use the Object Storage-mounted volume for that purpose. Then run `fix_system_environment.ipynb` to extract the Python 3.11 development headers from the supplied RPM. In `nb_fine_tuning_lora.ipynb`, run the dedicated header preflight cell immediately before the training cell. It verifies `Python.h` and sets `C_INCLUDE_PATH` and `CPATH` for the compiler used by Triton during `trainer.train()`.
+
 ## Held-out test evaluation
 
 [Demo 07](demo07_ticket_classification_test_evaluation.ipynb) evaluates both the original Qwen3-1.7B base model and the adapter saved by Demo 06 on the same `test_dataset.jsonl` records. It presents Category Accuracy, Severity Accuracy, Category+Severity Accuracy, and Valid JSON Rate with the fine-tuned-minus-base delta, while a progress bar shows evaluation progress. Its final cell lets you choose one test-record index and visually compare the ticket, fine-tuned JSON response, and expected JSON. The test split is never used for training or checkpoint selection.
@@ -67,3 +71,4 @@ After Demo 06 completes, open [demo07_ticket_classification_test_evaluation.ipyn
 
 The full behavioural and evaluation contract is defined in [specification 015](../specs/015-ticket-classification-lora-fine-tuning.md).
 The Linux CUDA variant is defined in [specification 016](../specs/016-demo09-linux-cuda-ticket-classification.md).
+The OCI AI Data Platform header configuration is defined in [specification 017](../specs/017-oci-ai-data-platform-ticket-classification-training.md).

@@ -55,13 +55,19 @@ conda activate llm-fine-tuning-on-mac
 python -m pip install -r requirements.txt
 ```
 
+For the exact package versions verified on macOS, add the constraints file:
+
+```bash
+python -m pip install -r requirements.txt -c constraints-macos.txt
+```
+
 Confirm the core packages are available:
 
 ```bash
 python -c "import torch, transformers, peft, datasets; print(torch.__version__, transformers.__version__, peft.__version__, datasets.__version__)"
 ```
 
-Start the notebook environment when notebooks are added:
+Start the notebook environment:
 
 ```bash
 jupyter lab
@@ -76,12 +82,13 @@ From the repository root, activate the environment and download the complete mod
 ```bash
 conda activate llm-fine-tuning-on-mac
 hf download Qwen/Qwen3-1.7B \
+  --revision 70d244cc86ccca08cf5af4e1e306ecf908b1ad5e \
   --local-dir artifacts/models/Qwen3-1.7B
 ```
 
 The final command prints the local destination. `artifacts/` is excluded from Git, including the metadata cache created by the CLI, so base-model files cannot be committed by accident.
 
-For a future reproducible revision pin, update the [model acquisition specification](specs/003-qwen3-1.7b-model-acquisition.md), record the full commit hash, and rerun the command. For a private or gated future artifact, authenticate interactively with `hf auth login`; never paste a token into a command that is saved in shell history.
+The `--revision` value pins the Hub commit used for the recorded experiments. To move to a newer revision, update the [model acquisition specification](specs/003-qwen3-1.7b-model-acquisition.md) with the new full commit hash, then rerun the command. For a private or gated future artifact, authenticate interactively with `hf auth login`; never paste a token into a command that is saved in shell history.
 
 ## Included demos
 
@@ -172,6 +179,7 @@ Future hypotheses for improving factual recall are recorded in [experiments/READ
 ├── specs/          # Behaviour, constraints, and acceptance criteria
 ├── scripts/        # Reusable local model-management commands
 ├── tests/          # Fast tests with no model downloads
+├── constraints-macos.txt # Exact package versions verified on macOS
 ├── requirements.txt
 └── README.md
 ```
@@ -202,7 +210,7 @@ Before adding a notebook, script, model, or dataset, read the relevant document 
 | `safetensors` | Handles safe model and adapter weight artifacts. |
 | `sentencepiece` | Supports compatible tokenizer requirements. |
 
-Version ranges intentionally keep the initial project compatible with Qwen 3-era Transformers releases while avoiding unreviewed major upgrades. Pin exact versions in a future training-run specification when strict experiment reproducibility is needed.
+Version ranges intentionally keep the initial project compatible with Qwen 3-era Transformers releases while avoiding unreviewed major upgrades. For strict reproducibility, install with [`constraints-macos.txt`](constraints-macos.txt), which records the exact versions verified on macOS.
 
 ## Status
 

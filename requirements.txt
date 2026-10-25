@@ -2,15 +2,16 @@
 jupyterlab>=4.4,<5
 ipywidgets>=8.1,<9
 matplotlib>=3.9,<4
+numpy>=1.26,<3
 
 # Model loading and parameter-efficient fine-tuning
 torch>=2.5,<3
 huggingface_hub>=0.30,<1
-transformers>=4.51,<5
+transformers>=4.56,<5
 peft>=0.15,<1
 accelerate>=1.4,<2
 datasets>=3.3,<4
-trl>=0.15,<1
+trl>=0.17,<1
 safetensors>=0.5,<1
 sentencepiece>=0.2,<1
 oci>=2.185,<3

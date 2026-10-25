@@ -4,7 +4,7 @@ This notebook measures the local Qwen3-1.7B base model against the LoRA adapter 
 
 ## Prerequisites
 
-* Download `Qwen/Qwen3-1.7B` to `artifacts/models/Qwen3-1.7B/`. This project does not pin the Hugging Face revision.
+* Download `Qwen/Qwen3-1.7B` to `artifacts/models/Qwen3-1.7B/`. Use the pinned revision documented in the root README.
 * Generate `artifacts/datasets/cv-qa/eval.jsonl` through the dataset-preparation workflow.
 * Complete [Demo 01](../demo01/README.md) so the adapter exists in `artifacts/training/demo01-qwen3-1.7b-lora/adapter/`.
 * Use macOS 14 or later with an available PyTorch MPS backend and the `llm-fine-tuning-on-mac` Conda environment.

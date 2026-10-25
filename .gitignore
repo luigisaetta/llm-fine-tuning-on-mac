@@ -15,3 +15,6 @@ __pycache__/
 # Local secrets and notebook checkpoints
 .env
 .ipynb_checkpoints/
+
+# Local helper scripts with environment-specific OCI identifiers
+copy_to_oss.sh

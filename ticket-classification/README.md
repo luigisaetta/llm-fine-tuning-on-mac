@@ -16,7 +16,7 @@ The response must be JSON only. Categories are limited to `APP-01`, `AUTH-01`, `
 
 ## Local prerequisites
 
-* Download `Qwen/Qwen3-1.7B` to `../artifacts/models/Qwen3-1.7B/`. The project does not pin the Hub revision.
+* Download `Qwen/Qwen3-1.7B` to `../artifacts/models/Qwen3-1.7B/`. Use the pinned revision documented in the root README.
 * Keep the following local datasets under `artifacts/datasets/` in this directory:
 
   | File | Purpose | Records at specification time |

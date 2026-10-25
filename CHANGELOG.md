@@ -8,6 +8,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+* 2026-10-25: Added `constraints-macos.txt` with the exact package versions of the macOS verification environment for reproducible installs.
 * 2026-09-15: Added an OCI AI Data Platform notebook to inspect local candidate storage before selecting a training-checkpoint directory.
 * 2026-09-13: Added Demo 09, a Linux/CUDA BF16 LoRA fine-tuning notebook for ticket classification with explicit CUDA GPU diagnostics and centrally editable dataset and adapter-output directories.
 * 2026-09-09: Added Demo 08, a deterministic severity dataset-shift analysis for ticket-classification validation V2 and held-out test data.
@@ -25,6 +26,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+* 2026-10-25: Pinned the documented `Qwen/Qwen3-1.7B` download to revision `70d244cc86ccca08cf5af4e1e306ecf908b1ad5e`.
+* 2026-10-25: Cleared stored outputs from all committed notebooks and ignored the local `copy_to_oss.sh` helper.
 * 2026-09-15: Moved OCI AI Data Platform training checkpoints and intermediate artifacts to `/tmp`; the completed adapter is now copied and verified on the Object Storage-mounted volume only after training finishes.
 * 2026-09-09: Added test-evaluation progress bars and a selected-ticket display to Demo 07.
 * 2026-09-09: Updated Demo 07 to compare Qwen3-1.7B baseline and fine-tuned-adapter test metrics, and added an interactive expected-versus-generated JSON inspection cell.
@@ -39,5 +42,6 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+* 2026-10-25: Raised the minimum `transformers` (4.56) and `trl` (0.17) versions to those that support the APIs the notebooks use, and declared the directly imported `numpy`.
 * 2026-09-15: Configured OCI AI Data Platform ticket-classification training with the extracted Python 3.11 header path before Triton compilation starts.
 * Prevented PEFT from silently upcasting Demo 01 LoRA adapter parameters to FP32, which caused the BF16 dtype validation to fail before training.

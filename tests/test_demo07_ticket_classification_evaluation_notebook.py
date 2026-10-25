@@ -1,6 +1,6 @@
 """
 Author: L. Saetta
-Date last modified: 2026-09-09
+Date last modified: 2026-10-25
 License: MIT
 Description: Static tests for the ticket-classification held-out test evaluation notebook.
 """
@@ -35,3 +35,11 @@ def test_held_out_evaluation_notebook_uses_only_test_data() -> None:
     assert "ticket_text" in source
     assert "Fine-tuned response" in source
     assert "Expected response" in source
+    assert "ADAPTER_PROMPT_VARIANT = 'short'" in source
+    assert "system_prompt_short.txt" in source
+    assert "BASELINE_PROMPT_VARIANTS = list(dict.fromkeys(['none', ADAPTER_PROMPT_VARIANT]))" in source
+    assert "build_prompt_messages(record['messages'][0], system_prompt)" in source
+    assert "build_prompt_messages(record['messages'][0], SYSTEM_PROMPTS[ADAPTER_PROMPT_VARIANT])" in source
+    assert "[record['messages'][0]]" not in source
+    assert "verify_adapter_prompt_variant(ADAPTER_DIRECTORY, ADAPTER_PROMPT_VARIANT" in source
+    assert "Delta (fine-tuned - base, same prompt)" in source

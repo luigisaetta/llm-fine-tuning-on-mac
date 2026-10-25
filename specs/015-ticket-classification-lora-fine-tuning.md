@@ -47,14 +47,14 @@ Key order and whitespace are not scored. The category and severity must be allow
 
 ## Training and validation contract
 
-* Load the local base model from `artifacts/models/Qwen3-1.7B/`. Its source identifier is `Qwen/Qwen3-1.7B`; this project does not currently pin a Hub revision.
-* Convert every record to TRL prompt/completion format, using the user message as the prompt and the assistant JSON as the completion.
+* Load the local base model from `artifacts/models/Qwen3-1.7B/`. Its source identifier is `Qwen/Qwen3-1.7B`; the download revision is pinned in [specification 003](003-qwen3-1.7b-model-acquisition.md).
+* Convert every record to TRL prompt/completion format, using the user message as the prompt and the assistant JSON as the completion. An optional system message precedes the user message, as defined by the prompt variant in [specification 021](021-ticket-classification-prompt-variant-b.md).
 * Start from the Demo 01 configuration baseline: LoRA rank 8, alpha 16, dropout 0.05, Q/K/V/O and gate/up/down projection target modules, learning rate `1e-4`, micro-batch size 1, gradient accumulation 8, maximum sequence length 512, and eight epochs. Keep every setting in one editable notebook cell.
 * Use `eval_strategy="epoch"`, `save_strategy="epoch"`, `load_best_model_at_end=True`, and `metric_for_best_model="eval_joint_accuracy"` with `greater_is_better=True`. The validation split is the only split passed to the trainer.
 * At the end of every epoch, after the unchanged trainer validation-loss evaluation, generate one deterministic response for every validation ticket. Immediately display category accuracy, severity accuracy, joint category-and-severity accuracy, and valid-JSON rate alongside the training and validation losses. This task-specific evaluation must not access the test split or alter training settings.
 * Batch validation generation with left padding and an editable batch size of 4 as the MPS memory baseline. Enable the generation KV cache only for this inference path; training continues with its existing cache setting.
 * Preserve the Demo 01 BF16 policy: MPS only, macOS 14 or later, model and LoRA parameters in `torch.bfloat16`, `autocast_adapter_dtype=False`, `bf16=True`, and `bf16_full_eval=True`. Fail with actionable errors if these requirements are not met.
-* Save checkpoints, logs, tokenizer, adapter, configuration, and training metadata only below `ticket-classification/artifacts/models/demo06-qwen3-1.7b-ticket-classification-lora/`. Save an adapter, never a duplicate base model.
+* Save checkpoints, logs, tokenizer, adapter, configuration, and training metadata only below `ticket-classification/artifacts/models/`, in the per-variant directory defined by [specification 021](021-ticket-classification-prompt-variant-b.md). Save an adapter, never a duplicate base model.
 
 ## Held-out test evaluation contract
 

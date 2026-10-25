@@ -14,6 +14,8 @@ This directory contains a Mac-first LoRA fine-tuning demo for structured IT-supp
 
 The response must be JSON only. Categories are limited to `APP-01`, `AUTH-01`, `DB-01`, `DB-02`, `DEV-01`, `MAIL-01`, `MOB-01`, `NET-01`, `SEC-01`, and `SRV-01`; severities are `P1`, `P2`, `P3`, or `P4`.
 
+The meaning of each category and severity level, and the rules for choosing between them, are defined in the [classification guide](classification_guide.md). The [system prompts](prompts/README.md) derived from it are selected in Demos 06 and 07 with the prompt-variant setting described below.
+
 ## Local prerequisites
 
 * Download `Qwen/Qwen3-1.7B` to `../artifacts/models/Qwen3-1.7B/`. Use the pinned revision documented in the root README.
@@ -34,7 +36,18 @@ The supplied datasets are synthetic and version-controlled. Training outputs rem
 1. Validate the training and validation splits and their JSON response schema.
 2. Fine-tune a BF16 LoRA adapter on training records.
 3. Measure validation loss and deterministic category, severity, joint-label, and valid-JSON metrics at the end of every epoch, then restore the adapter with the highest category-and-severity accuracy.
-4. Save the restored best-joint-accuracy adapter and tokenizer below `artifacts/models/` in this directory.
+4. Save the restored best-joint-accuracy adapter, tokenizer, and `prompt_variant.json` below `artifacts/models/` in this directory.
+
+### Prompt variants
+
+`PROMPT_VARIANT` in Demo 06's configuration cell selects the system prompt, as defined in [specification 021](../specs/021-ticket-classification-prompt-variant-b.md):
+
+| Value | Variant | System prompt | Adapter directory below `artifacts/models/` |
+| --- | --- | --- | --- |
+| `'none'` | A | None, the ticket text only | `demo06-qwen3-1.7b-ticket-classification-lora/` |
+| `'short'` (default) | B | `prompts/system_prompt_short.txt` | `demo06-qwen3-1.7b-ticket-classification-lora-prompt-short/` |
+
+The same system prompt is used for training, per-epoch validation, and the severity confusion matrix. Before training, the notebook stops if a formatted sequence exceeds `MAX_SEQUENCE_LENGTH`. Set Demo 07's `ADAPTER_PROMPT_VARIANT` to the same value; Demo 07 refuses an adapter whose recorded prompt variant or prompt text differs.
 
 ## Linux CUDA training workflow
 
@@ -52,7 +65,7 @@ The OCI AI Data Platform notebooks are in [ai-dp](ai-dp/). First run `inspect_lo
 
 ## Held-out test evaluation
 
-[Demo 07](demo07_ticket_classification_test_evaluation.ipynb) evaluates both the original Qwen3-1.7B base model and the adapter saved by Demo 06 on the same `test_dataset.jsonl` records. It presents Category Accuracy, Severity Accuracy, Category+Severity Accuracy, and Valid JSON Rate with the fine-tuned-minus-base delta, while a progress bar shows evaluation progress. Its final cell lets you choose one test-record index and visually compare the ticket, fine-tuned JSON response, and expected JSON. The test split is never used for training or checkpoint selection.
+[Demo 07](demo07_ticket_classification_test_evaluation.ipynb) evaluates the original Qwen3-1.7B base model, without a system prompt and with the adapter's prompt variant, and the adapter saved by Demo 06 on the same `test_dataset.jsonl` records. The delta compares the adapter with the base model given the same prompt. It presents Category Accuracy, Severity Accuracy, Category+Severity Accuracy, and Valid JSON Rate with the fine-tuned-minus-base delta, while a progress bar shows evaluation progress. Its final cell lets you choose one test-record index and visually compare the ticket, fine-tuned JSON response, and expected JSON. The test split is never used for training or checkpoint selection.
 
 ## Severity dataset-shift analysis
 

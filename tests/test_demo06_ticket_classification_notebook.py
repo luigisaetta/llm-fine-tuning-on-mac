@@ -1,6 +1,6 @@
 """
 Author: L. Saetta
-Date last modified: 2026-09-08
+Date last modified: 2026-10-25
 License: MIT
 Description: Static tests for the ticket-classification LoRA training notebook.
 """
@@ -43,6 +43,16 @@ def test_ticket_classification_notebook_uses_only_training_and_validation() -> N
     assert "use_cache=True" in source
     assert "metric_for_best_model='eval_joint_accuracy'" in source
     assert "greater_is_better=True" in source
+    assert "PROMPT_VARIANT = 'short'" in source
+    assert "system_prompt_short.txt" in source
+    assert "def build_prompt_messages(ticket_message: dict, system_prompt: str | None)" in source
+    assert source.count("build_prompt_messages(record['messages'][0], SYSTEM_PROMPT)") == 3
+    assert 'build_prompt_messages(record["messages"][0], SYSTEM_PROMPT)' in source
+    assert "[record['messages'][0]]" not in source
+    assert "-prompt-{PROMPT_VARIANT}" in source
+    assert "'prompt_variant.json'" in source
+    assert "prompt_sha256" in source
+    assert "longest_sequence_length > MAX_SEQUENCE_LENGTH" in source
     assert "evaluation_metrics['eval_joint_accuracy']" in source
     assert all(
         index > 0 and notebook["cells"][index - 1]["cell_type"] == "markdown"

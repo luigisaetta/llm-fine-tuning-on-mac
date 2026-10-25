@@ -8,6 +8,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+* 2026-10-25: Added short and full ticket-classification system prompts derived from the classification guide, with measured token budgets.
+* 2026-10-25: Added the ticket-classification guide, a versioned category and severity policy retrofitted from past classifications that combines explicit impact statements with contextual severity signals.
 * 2026-10-25: Added `constraints-macos.txt` with the exact package versions of the macOS verification environment for reproducible installs.
 * 2026-09-15: Added an OCI AI Data Platform notebook to inspect local candidate storage before selecting a training-checkpoint directory.
 * 2026-09-13: Added Demo 09, a Linux/CUDA BF16 LoRA fine-tuning notebook for ticket classification with explicit CUDA GPU diagnostics and centrally editable dataset and adapter-output directories.
@@ -26,6 +28,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+* 2026-10-25: Added a prompt-variant setting to Demos 06 and 07: Demo 06 trains with no system prompt or with the short system prompt, records the variant with the adapter, and checks sequence lengths; Demo 07 evaluates the base model with the same prompt as the adapter.
 * 2026-10-25: Pinned the documented `Qwen/Qwen3-1.7B` download to revision `70d244cc86ccca08cf5af4e1e306ecf908b1ad5e`.
 * 2026-10-25: Cleared stored outputs from all committed notebooks and ignored the local `copy_to_oss.sh` helper.
 * 2026-09-15: Moved OCI AI Data Platform training checkpoints and intermediate artifacts to `/tmp`; the completed adapter is now copied and verified on the Object Storage-mounted volume only after training finishes.

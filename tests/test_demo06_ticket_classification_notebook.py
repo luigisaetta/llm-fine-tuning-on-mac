@@ -38,6 +38,10 @@ def test_ticket_classification_notebook_uses_only_training_and_validation() -> N
     assert "Category+Severity Accuracy" in source
     assert "display_epoch_metrics(epoch_metrics)" in source
     assert "VALIDATION_GENERATION_BATCH_SIZE = 4" in source
+    assert "PER_DEVICE_TRAIN_BATCH_SIZE = 4" in source
+    assert "GRADIENT_ACCUMULATION_STEPS = 2" in source
+    assert "PER_DEVICE_EVAL_BATCH_SIZE = 4" in source
+    assert "train_samples_per_second" in source
     assert "padding=True" in source
     assert "tokenizer.padding_side = 'left'" in source
     assert "use_cache=True" in source

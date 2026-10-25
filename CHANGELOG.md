@@ -28,6 +28,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+* 2026-10-25: Changed Demo 06 to a training micro-batch size of 4 with gradient accumulation 2 (effective batch size unchanged at 8) and a validation-loss batch size of 4, and to print training runtime and throughput.
 * 2026-10-25: Added a prompt-variant setting to Demos 06 and 07: Demo 06 trains with no system prompt or with the short system prompt, records the variant with the adapter, and checks sequence lengths; Demo 07 evaluates the base model with the same prompt as the adapter.
 * 2026-10-25: Pinned the documented `Qwen/Qwen3-1.7B` download to revision `70d244cc86ccca08cf5af4e1e306ecf908b1ad5e`.
 * 2026-10-25: Cleared stored outputs from all committed notebooks and ignored the local `copy_to_oss.sh` helper.

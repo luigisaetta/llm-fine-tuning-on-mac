@@ -13,7 +13,7 @@ Demo 06 trains and Demo 07 evaluates with the ticket text as the only prompt. Th
 ## Non-goals
 
 * Variant C, which needs `MAX_SEQUENCE_LENGTH` 1024 and a separate run.
-* Changing datasets, LoRA settings, optimizer, epochs, seed, or checkpoint policy.
+* Changing datasets, LoRA settings, optimizer, epochs, seed, or checkpoint policy. The batch settings changed separately on 2026-10-25 (specification 015); the existing variant A adapter used the previous settings, so variant A must be retrained with the current settings, and the same PyTorch version, before comparing it with variant B.
 * Demo 09 and the OCI AI Data Platform notebook.
 
 ## Requirements

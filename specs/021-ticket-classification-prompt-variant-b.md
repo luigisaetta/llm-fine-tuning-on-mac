@@ -35,7 +35,67 @@ Demo 06 trains and Demo 07 evaluates with the ticket text as the only prompt. Th
 ## Verification
 
 * 2026-10-25: static tests and an offline check of the prompt helpers with the local Qwen3-1.7B tokenizer. No training or model generation was run.
+* 2026-10-25: the user ran Demo 06 and Demo 07 locally for variants A and B; results are below.
 
 ## Results
 
-Pending: to be recorded after the variant B run of Demo 06 and Demo 07.
+### Demo 06 training runs (2026-10-25)
+
+Environment: macOS, Apple M4 Pro, MPS, BF16, PyTorch 2.14.1, Transformers 4.57.6, TRL 0.29.1, PEFT 0.20.0. Both runs used micro-batch 4, gradient accumulation 2, eight epochs, seed 42, and the training and validation V2 splits. Values were read from the executed notebook outputs and the saved `trainer_state.json` files.
+
+Validation Category+Severity Accuracy by epoch (200 records):
+
+| Epoch | A (`'none'`) | B (`'short'`) |
+| ---: | ---: | ---: |
+| 1 | 77.5% | 86.0% |
+| 2 | 83.0% | **89.0%** |
+| 3 | 86.0% | 86.0% |
+| 4 | 86.0% | 84.5% |
+| 5 | **87.0%** | 85.5% |
+| 6 | 86.5% | 86.0% |
+| 7 | 86.0% | 85.5% |
+| 8 | 86.5% | 85.0% |
+
+| Measure | A | B |
+| --- | ---: | ---: |
+| Selected epoch (best joint accuracy) | 5 | 2 |
+| Best validation joint accuracy | 87.0% | 89.0% |
+| Validation severity accuracy, every epoch after the first | 100.0% | 100.0% |
+| Valid JSON rate, every epoch | 100.0% | 100.0% |
+| Lowest validation loss (epoch 1) | 0.0975 | 0.0786 |
+| Training runtime, including per-epoch validation generation | 35.8 min | 112.7 min |
+| Throughput | 3.72 samples/s | 1.18 samples/s |
+| Validation-loss pass per epoch | 12.5 s | 43.6 s |
+
+Observations:
+
+* Validation errors are category errors only; severity is always correct because validation uses the same impact-sentence templates as training. Validation therefore cannot measure the severity generalization problem.
+* B learns faster: 86.0% after one epoch against 77.5% for A. The best values differ by 2 points, which is 4 of 200 records and within sampling noise (standard error about 2.4 points); from epoch 3 the two variants are equivalent.
+* Validation loss is lowest after epoch 1 and rises afterwards while training loss approaches zero, so eight epochs over-train both variants.
+* B costs 3.1 times more training time. Because B peaks at epoch 2, a two-epoch B run would cost about 28 minutes, less than the full A run.
+* No runtime was recorded for the earlier micro-batch 1 run, so the speed-up from the batch change is not measured.
+
+### Demo 07 held-out evaluation (2026-10-25)
+
+Same environment as Demo 06; 200 test records; deterministic generation. Values were read from the executed copies `demo07_run_short.ipynb` and `demo07_run_none.ipynb`.
+
+| Metric | Base, no prompt | Base, prompt B | Adapter A, no prompt | Adapter B, prompt B |
+| --- | ---: | ---: | ---: | ---: |
+| Category Accuracy | 0.0% | 68.5% | 90.5% | 90.0% |
+| Severity Accuracy | 0.0% | 40.0% | 57.0% | 54.0% |
+| Category+Severity Accuracy | 0.0% | 26.0% | 51.0% | 48.0% |
+| Valid JSON Rate | 0.0% | 100.0% | 100.0% | 100.0% |
+
+Reference points: the most frequent test severity (P3) covers 40.0% of the records and the most frequent category 10.0%; the standard error of a single accuracy near 50% on 200 records is about 3.5 points.
+
+Observations:
+
+* Without a system prompt the base model never produces valid JSON, so the earlier fine-tuning delta (+51.0 joint points) measured mostly the output format. Against the base model with prompt B, fine-tuning adds 22.0 joint points, 21.5 category points, and 14.0 severity points.
+* With prompt B, the base model already returns valid JSON for every record and 68.5% correct categories without training.
+* After fine-tuning, A and B are equivalent on test: the 3-point joint difference is 6 of 200 records and within sampling noise. Prompt B does not improve the fine-tuned model; its benefits are a fair baseline and faster learning, at 3.1 times the training cost.
+* Category generalizes: test category accuracy (90%) matches validation (85-89%).
+* Severity does not generalize: it drops from 100% on validation to 54-57% on test, only 14 to 17 points above always answering P3. Prompt B contains no severity rules and the training data teaches the impact-sentence shortcut, so this result supports changing the training data (and testing the severity rules of variant C) rather than the prompt alone.
+
+### Conclusion
+
+Variant B is not adopted as a replacement for A on accuracy grounds. Keep the B base-model baseline in Demo 07 as the fair reference. Next steps: measure the base model zero-shot with variant C to test whether the guide's severity rules help, add training tickets whose impact is implicit, and reduce the number of epochs.

@@ -8,6 +8,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+* 2026-10-26: Added the `llm_fine_tuning` package under `src/`, installable with `pip install --no-deps -e .`, with unit tests for dataset validation, prompts, scoring, training configuration, and dataset-shift measurements.
 * 2026-10-25: Added short and full ticket-classification system prompts derived from the classification guide, with measured token budgets.
 * 2026-10-25: Added the ticket-classification guide, a versioned category and severity policy retrofitted from past classifications that combines explicit impact statements with contextual severity signals.
 * 2026-10-25: Added `constraints-macos.txt` with the exact package versions of the macOS verification environment for reproducible installs.
@@ -28,6 +29,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+* 2026-10-26: Rewrote Demos 06, 07, and 08 as short, didactic notebooks with a Settings cell and step-by-step explanations, using the shared package; behavior is unchanged except that the default prompt variant is `'none'`, Demo 06 no longer exposes `DEVICE_REQUEST`, its confusion matrix uses batched generation, Demo 07 validates labels and duplicates in the test split, and variant `'full'` is selectable.
 * 2026-10-25: Changed Demo 06 to a training micro-batch size of 4 with gradient accumulation 2 (effective batch size unchanged at 8) and a validation-loss batch size of 4, and to print training runtime and throughput.
 * 2026-10-25: Added a prompt-variant setting to Demos 06 and 07: Demo 06 trains with no system prompt or with the short system prompt, records the variant with the adapter, and checks sequence lengths; Demo 07 evaluates the base model with the same prompt as the adapter.
 * 2026-10-25: Pinned the documented `Qwen/Qwen3-1.7B` download to revision `70d244cc86ccca08cf5af4e1e306ecf908b1ad5e`.

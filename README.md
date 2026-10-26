@@ -61,6 +61,12 @@ For the exact package versions verified on macOS, add the constraints file:
 python -m pip install -r requirements.txt -c constraints-macos.txt
 ```
 
+Then install the project's own notebook code, the `llm_fine_tuning` package in `src/`, in editable mode. Run this once from the repository root; later changes to `src/` are picked up without reinstalling:
+
+```bash
+python -m pip install --no-deps -e .
+```
+
 Confirm the core packages are available:
 
 ```bash
@@ -178,8 +184,10 @@ Future hypotheses for improving factual recall are recorded in [experiments/READ
 ├── dataset_preparation/  # ChatGPT-assisted CV-to-Q&A dataset guide
 ├── specs/          # Behaviour, constraints, and acceptance criteria
 ├── scripts/        # Reusable local model-management commands
+├── src/            # llm_fine_tuning package used by the notebooks (pip install --no-deps -e .)
 ├── tests/          # Fast tests with no model downloads
 ├── constraints-macos.txt # Exact package versions verified on macOS
+├── pyproject.toml   # Packaging of src/ and pytest configuration
 ├── requirements.txt
 └── README.md
 ```

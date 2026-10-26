@@ -6,7 +6,7 @@ IT-support tickets must be classified consistently into a predefined category an
 
 ## Scope
 
-Demo 06 is a restartable training notebook at `ticket-classification/demo06_ticket_classification_lora_fine_tuning.ipynb`. Demo 07 is a separate held-out evaluation notebook at `ticket-classification/demo07_ticket_classification_test_evaluation.ipynb`. Demo 08 is a deterministic dataset-shift analysis notebook at `ticket-classification/demo08_severity_dataset_shift_analysis.ipynb`. Demos 06 and 07 reuse the Qwen3-1.7B local model and the BF16 MPS LoRA approach of Demo 01.
+Demo 06 is a restartable training notebook at `ticket-classification/demo06_ticket_classification_lora_fine_tuning.ipynb`. Demo 07 is a separate held-out evaluation notebook at `ticket-classification/demo07_ticket_classification_test_evaluation.ipynb`. Demo 08 is a deterministic dataset-shift analysis notebook at `ticket-classification/demo08_severity_dataset_shift_analysis.ipynb`. Demos 06 and 07 reuse the Qwen3-1.7B local model and the BF16 MPS LoRA approach of Demo 01. Since 2026-10-26 their implementation is in the `llm_fine_tuning.tickets` package ([specification 022](022-shared-package-and-didactic-notebooks.md)), and the default prompt variant is `'none'`.
 
 This specification covers dataset validation, prompt/completion formatting, per-epoch validation during training, held-out test evaluation after training, adapter artifacts, structured-output scoring, and deterministic severity dataset-shift analysis. It does not cover a production ticketing integration, API deployment, automatic remediation, or full-parameter fine-tuning.
 

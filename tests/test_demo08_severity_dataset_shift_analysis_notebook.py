@@ -1,27 +1,17 @@
 """
 Author: L. Saetta
-Date last modified: 2026-09-09
+Date last modified: 2026-10-26
 License: MIT
-Description: Static tests for the ticket-classification severity dataset-shift analysis notebook.
+Description: Structure tests for the Demo 08 deterministic severity dataset-shift analysis notebook.
 """
 
-import json
-from pathlib import Path
+from notebook_structure import assert_didactic_structure, load_notebook
 
 
-def test_severity_dataset_shift_analysis_notebook_is_restartable() -> None:
-    """Verify deterministic validation-versus-test analysis and clean notebook outputs."""
-    root = Path(__file__).resolve().parents[1]
-    notebook = json.loads((root / "ticket-classification" / "demo08_severity_dataset_shift_analysis.ipynb").read_text(encoding="utf-8"))
-    source = "\n".join("".join(cell.get("source", [])) for cell in notebook["cells"])
-
-    assert notebook["nbformat"] == 4
-    assert all(cell.get("outputs", []) == [] and cell.get("execution_count") is None for cell in notebook["cells"] if cell["cell_type"] == "code")
-    assert "validation_dataset_v2.jsonl" in source
-    assert "test_dataset.jsonl" in source
-    assert "SEVERITIES = ('P1', 'P2', 'P3', 'P4')" in source
-    assert "Severity-distribution TVD" in source
-    assert "P(severity | category)" in source
-    assert "Top-term Jaccard overlap" in source
-    assert "matplotlib.pyplot" in source
-    assert "import random" not in source
+def test_demo08_is_a_didactic_model_free_analysis() -> None:
+    """Demo 08 compares validation V2 and test data with deterministic package functions and loads no model."""
+    source = assert_didactic_structure(load_notebook("ticket-classification/demo08_severity_dataset_shift_analysis.ipynb"), "TOP_TERMS =")
+    assert "paths.validation_file" in source and "paths.test_file" in source and "paths.train_file" not in source
+    assert "llm_fine_tuning.models" not in source and "import random" not in source
+    for expected in ("total_variation_distance(", "conditional_severity_shift(", "severity_term_overlap(", "diagnostic_rows(", "plot_conditional_shift("):
+        assert expected in source, expected

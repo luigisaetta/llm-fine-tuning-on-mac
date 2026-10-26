@@ -28,6 +28,9 @@ The meaning of each category and severity level, and the rules for choosing betw
   | `test_dataset.jsonl` | Final held-out evaluation only | 200 |
 
 * Use the `llm-fine-tuning-on-mac` Conda environment on macOS 14 or later with an available MPS backend.
+* Install the shared notebook code once from the repository root: `python -m pip install --no-deps -e .`
+
+Demos 06, 07, and 08 keep only the steps and the settings in the notebook; the implementation is in the `llm_fine_tuning.tickets` package under `src/` ([specification 022](../specs/022-shared-package-and-didactic-notebooks.md)). Each notebook starts with a **Settings** cell listing the values you typically change.
 
 The supplied datasets are synthetic and version-controlled. Training outputs remain local, ignored artifacts. Do not place ticket text or generated responses in the committed notebook.
 
@@ -40,14 +43,15 @@ The supplied datasets are synthetic and version-controlled. Training outputs rem
 
 ### Prompt variants
 
-`PROMPT_VARIANT` in Demo 06's configuration cell selects the system prompt, as defined in [specification 021](../specs/021-ticket-classification-prompt-variant-b.md):
+`prompt_variant` in Demo 06's Settings cell selects the system prompt, as defined in [specification 021](../specs/021-ticket-classification-prompt-variant-b.md):
 
 | Value | Variant | System prompt | Adapter directory below `artifacts/models/` |
 | --- | --- | --- | --- |
-| `'none'` | A | None, the ticket text only | `demo06-qwen3-1.7b-ticket-classification-lora/` |
-| `'short'` (default) | B | `prompts/system_prompt_short.txt` | `demo06-qwen3-1.7b-ticket-classification-lora-prompt-short/` |
+| `'none'` (default) | A | None, the ticket text only | `demo06-qwen3-1.7b-ticket-classification-lora/` |
+| `'short'` | B | `prompts/system_prompt_short.txt` | `demo06-qwen3-1.7b-ticket-classification-lora-prompt-short/` |
+| `'full'` | C | `prompts/system_prompt_full.txt`; requires `max_sequence_length=1024` | `demo06-qwen3-1.7b-ticket-classification-lora-prompt-full/` |
 
-The same system prompt is used for training, per-epoch validation, and the severity confusion matrix. Before training, the notebook stops if a formatted sequence exceeds `MAX_SEQUENCE_LENGTH`. Set Demo 07's `ADAPTER_PROMPT_VARIANT` to the same value; Demo 07 refuses an adapter whose recorded prompt variant or prompt text differs.
+The same system prompt is used for training, per-epoch validation, and the severity confusion matrix. Before training, the notebook stops if a formatted sequence exceeds `max_sequence_length`. Set Demo 07's `ADAPTER_PROMPT_VARIANT` to the same value; Demo 07 refuses an adapter whose recorded prompt variant or prompt text differs.
 
 ## Linux CUDA training workflow
 

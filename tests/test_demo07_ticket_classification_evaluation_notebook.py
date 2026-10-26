@@ -1,45 +1,21 @@
 """
 Author: L. Saetta
-Date last modified: 2026-10-25
+Date last modified: 2026-10-26
 License: MIT
-Description: Static tests for the ticket-classification held-out test evaluation notebook.
+Description: Structure tests for the Demo 07 held-out test evaluation notebook.
 """
 
-import json
-from pathlib import Path
+from notebook_structure import assert_didactic_structure, load_notebook
 
 
-def test_held_out_evaluation_notebook_uses_only_test_data() -> None:
-    """Verify test-only PEFT evaluation, metrics, and restartable notebook structure."""
-    root = Path(__file__).resolve().parents[1]
-    notebook = json.loads((root / "ticket-classification" / "demo07_ticket_classification_test_evaluation.ipynb").read_text(encoding="utf-8"))
-    source = "\n".join("".join(cell.get("source", [])) for cell in notebook["cells"])
-
-    assert notebook["nbformat"] == 4
-    assert all(cell.get("outputs", []) == [] and cell.get("execution_count") is None for cell in notebook["cells"] if cell["cell_type"] == "code")
-    assert "test_dataset.jsonl" in source
-    assert "train_dataset" not in source
-    assert "validation_dataset" not in source
-    assert "base_model_metrics" in source
-    assert "fine_tuned_metrics" in source
-    assert "PeftModel.from_pretrained" in source
-    assert "model.generate" in source
-    assert "category_accuracy" in source
-    assert "severity_accuracy" in source
-    assert "joint_accuracy" in source
-    assert "valid_json_rate" in source
-    assert "use_cache=True" in source
-    assert "from tqdm.auto import tqdm" in source
-    assert "progress_bar.update" in source
-    assert "TEST_RECORD_INDEX" in source
-    assert "ticket_text" in source
-    assert "Fine-tuned response" in source
-    assert "Expected response" in source
-    assert "ADAPTER_PROMPT_VARIANT = 'short'" in source
-    assert "system_prompt_short.txt" in source
-    assert "BASELINE_PROMPT_VARIANTS = list(dict.fromkeys(['none', ADAPTER_PROMPT_VARIANT]))" in source
-    assert "build_prompt_messages(record['messages'][0], system_prompt)" in source
-    assert "build_prompt_messages(record['messages'][0], SYSTEM_PROMPTS[ADAPTER_PROMPT_VARIANT])" in source
-    assert "[record['messages'][0]]" not in source
-    assert "verify_adapter_prompt_variant(ADAPTER_DIRECTORY, ADAPTER_PROMPT_VARIANT" in source
-    assert "Delta (fine-tuned - base, same prompt)" in source
+def test_demo07_is_a_didactic_evaluation_notebook() -> None:
+    """Demo 07 uses only the test split and compares the adapter with the base model given the same prompt."""
+    source = assert_didactic_structure(load_notebook("ticket-classification/demo07_ticket_classification_test_evaluation.ipynb"), "ADAPTER_PROMPT_VARIANT =")
+    assert "load_training_splits" not in source and "train_dataset" not in source and "validation_dataset" not in source
+    for expected in (
+        'ADAPTER_PROMPT_VARIANT = "none"', "TEST_GENERATION_BATCH_SIZE = 4", "TEST_RECORD_INDEX", "load_test_split(paths)",
+        'list(dict.fromkeys(["none", ADAPTER_PROMPT_VARIANT]))', "verify_adapter_prompt(adapter_directory, ADAPTER_PROMPT_VARIANT",
+        "release_model_memory()", "load_adapter_model(", "Delta (fine-tuned - base, same prompt)", "delta=(adapter_column, same_prompt_column)",
+        "show_prediction(",
+    ):
+        assert expected in source, expected

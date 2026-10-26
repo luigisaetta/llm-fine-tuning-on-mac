@@ -12,6 +12,10 @@ pdf/
 __pycache__/
 *.py[cod]
 
+# Editable-install metadata of the src/ package
+*.egg-info/
+build/
+
 # Local secrets and notebook checkpoints
 .env
 .ipynb_checkpoints/

@@ -1,0 +1,23 @@
+# Packaging for the reusable notebook code in src/llm_fine_tuning (specification 022).
+# Runtime dependencies are installed from requirements.txt, so the package declares none:
+#   python -m pip install -r requirements.txt -c constraints-macos.txt
+#   python -m pip install --no-deps -e .
+
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "llm-fine-tuning-on-mac"
+version = "0.1.0"
+description = "Reusable code for the LoRA fine-tuning notebooks of this repository."
+license = "MIT"
+requires-python = ">=3.11"
+dependencies = []
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

@@ -1,5 +1,7 @@
 # Ticket Classification Prompt Variant B Experiment
 
+> **2026-11-09:** the datasets were replaced ([specification 023](023-ticket-datasets-v2-and-learning-rate-schedule.md)). The results below refer to the earlier datasets and are not comparable with runs on the current ones.
+
 ## Problem
 
 Demo 06 trains and Demo 07 evaluates with the ticket text as the only prompt. The base-model baseline cannot know the task, the JSON format, or the label codes, so the reported fine-tuning delta is overstated. The first step of the prompt experiment compares the current behavior (variant A, no system prompt) with the short system prompt (variant B) defined in [specification 020](020-ticket-classification-system-prompt.md).

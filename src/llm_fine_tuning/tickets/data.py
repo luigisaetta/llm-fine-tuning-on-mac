@@ -1,6 +1,6 @@
 """
 Author: L. Saetta
-Date last modified: 2026-10-26
+Date last modified: 2026-11-09
 License: MIT
 Description: Locate ticket-classification artifacts, load and validate dataset splits, and format records for TRL.
 """
@@ -17,7 +17,7 @@ from llm_fine_tuning.tickets.prompts import build_prompt_messages
 
 TRAIN_FILE_NAME = "train_dataset_v2.jsonl"
 VALIDATION_FILE_NAME = "validation_dataset_v2.jsonl"
-TEST_FILE_NAME = "test_dataset.jsonl"
+TEST_FILE_NAME = "test_dataset_v2.jsonl"
 
 
 @dataclass(frozen=True)

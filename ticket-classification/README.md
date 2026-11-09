@@ -23,9 +23,11 @@ The meaning of each category and severity level, and the rules for choosing betw
 
   | File | Purpose | Records at specification time |
   | --- | --- | ---: |
-  | `train_dataset_v2.jsonl` | LoRA training | 1,000 |
-  | `validation_dataset_v2.jsonl` | Per-epoch validation and best-checkpoint selection | 200 |
-  | `test_dataset.jsonl` | Final held-out evaluation only | 200 |
+  | `train_dataset_v2.jsonl` | LoRA training | 980 |
+  | `validation_dataset_v2.jsonl` | Per-epoch validation and best-checkpoint selection | 210 |
+  | `test_dataset_v2.jsonl` | Final held-out evaluation only | 210 |
+
+  The three splits come from one pool of 1,400 synthetic tickets, split with stratification by category and severity, so they have the same label distribution. They are imported from the `llm-fine-tuning-on-aidp` project; provenance, hashes, and the reasons for the change are in [specification 023](../specs/023-ticket-datasets-v2-and-learning-rate-schedule.md). Results recorded before 2026-11-09 (specifications 015 and 021) refer to the earlier datasets and are not comparable.
 
 * Use the `llm-fine-tuning-on-mac` Conda environment on macOS 14 or later with an available MPS backend.
 * Install the shared notebook code once from the repository root: `python -m pip install --no-deps -e .`
@@ -38,8 +40,9 @@ The supplied datasets are synthetic and version-controlled. Training outputs rem
 
 1. Validate the training and validation splits and their JSON response schema.
 2. Fine-tune a BF16 LoRA adapter on training records.
-3. Measure validation loss and deterministic category, severity, joint-label, and valid-JSON metrics at the end of every epoch, then restore the adapter with the highest category-and-severity accuracy.
-4. Save the restored best-joint-accuracy adapter, tokenizer, and `prompt_variant.json` below `artifacts/models/` in this directory.
+3. Use a learning rate that warms up linearly over the first 10% of the optimizer steps and then decays to 0 along a cosine curve (5 epochs by default).
+4. Measure validation loss and deterministic category, severity, joint-label, and valid-JSON metrics at the end of every epoch, then restore the adapter with the highest category-and-severity accuracy.
+5. Save the restored best-joint-accuracy adapter, tokenizer, and `prompt_variant.json` below `artifacts/models/` in this directory.
 
 ### Prompt variants
 
@@ -47,8 +50,8 @@ The supplied datasets are synthetic and version-controlled. Training outputs rem
 
 | Value | Variant | System prompt | Adapter directory below `artifacts/models/` |
 | --- | --- | --- | --- |
-| `'none'` (default) | A | None, the ticket text only | `demo06-qwen3-1.7b-ticket-classification-lora/` |
-| `'short'` | B | `prompts/system_prompt_short.txt` | `demo06-qwen3-1.7b-ticket-classification-lora-prompt-short/` |
+| `'none'` | A | None, the ticket text only | `demo06-qwen3-1.7b-ticket-classification-lora/` |
+| `'short'` (default since 2026-11-09) | B | `prompts/system_prompt_short.txt` | `demo06-qwen3-1.7b-ticket-classification-lora-prompt-short/` |
 | `'full'` | C | `prompts/system_prompt_full.txt`; requires `max_sequence_length=1024` | `demo06-qwen3-1.7b-ticket-classification-lora-prompt-full/` |
 
 The same system prompt is used for training, per-epoch validation, and the severity confusion matrix. Before training, the notebook stops if a formatted sequence exceeds `max_sequence_length`. Set Demo 07's `ADAPTER_PROMPT_VARIANT` to the same value; Demo 07 refuses an adapter whose recorded prompt variant or prompt text differs.
@@ -69,11 +72,11 @@ The OCI AI Data Platform notebooks are in [ai-dp](ai-dp/). First run `inspect_lo
 
 ## Held-out test evaluation
 
-[Demo 07](demo07_ticket_classification_test_evaluation.ipynb) evaluates the original Qwen3-1.7B base model, without a system prompt and with the adapter's prompt variant, and the adapter saved by Demo 06 on the same `test_dataset.jsonl` records. The delta compares the adapter with the base model given the same prompt. It presents Category Accuracy, Severity Accuracy, Category+Severity Accuracy, and Valid JSON Rate with the fine-tuned-minus-base delta, while a progress bar shows evaluation progress. Its final cell lets you choose one test-record index and visually compare the ticket, fine-tuned JSON response, and expected JSON. The test split is never used for training or checkpoint selection.
+[Demo 07](demo07_ticket_classification_test_evaluation.ipynb) evaluates the original Qwen3-1.7B base model, without a system prompt and with the adapter's prompt variant, and the adapter saved by Demo 06 on the same `test_dataset_v2.jsonl` records. The delta compares the adapter with the base model given the same prompt. It presents Category Accuracy, Severity Accuracy, Category+Severity Accuracy, and Valid JSON Rate with the fine-tuned-minus-base delta, while a progress bar shows evaluation progress. Its final cell lets you choose one test-record index and visually compare the ticket, fine-tuned JSON response, and expected JSON. The test split is never used for training or checkpoint selection.
 
 ## Severity dataset-shift analysis
 
-[Demo 08](demo08_severity_dataset_shift_analysis.ipynb) is a deterministic, model-free comparison of validation V2 and test data. It helps investigate a validation-to-test severity-accuracy drop through severity prevalence, ticket length, category-conditioned label distributions, lexical cue overlap, and exact duplicate checks. Its visualizations and final checklist identify potential dataset-shift hypotheses rather than claiming a causal explanation.
+[Demo 08](demo08_severity_dataset_shift_analysis.ipynb) is a deterministic, model-free comparison of the validation and test data. It was written to investigate the validation-to-test severity-accuracy drop observed with the earlier datasets through severity prevalence, ticket length, category-conditioned label distributions, lexical cue overlap, and exact duplicate checks. Its visualizations and final checklist identify potential dataset-shift hypotheses rather than claiming a causal explanation.
 
 From the repository root, activate the project environment and start JupyterLab:
 

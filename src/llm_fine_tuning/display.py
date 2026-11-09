@@ -1,6 +1,6 @@
 """
 Author: L. Saetta
-Date last modified: 2026-10-26
+Date last modified: 2026-11-09
 License: MIT
 Description: Present notebook results as Markdown tables and Matplotlib charts.
 """
@@ -96,6 +96,30 @@ def plot_loss_curves(log_history: list[dict]) -> None:
     axis.grid(True, linestyle="--", linewidth=0.7, alpha=0.55)
     axis.legend(frameon=True)
     axis.set_xticks([entry["epoch"] for entry in validation_logs])
+    plt.tight_layout()
+    plt.show()
+
+
+def plot_learning_rate(log_history: list[dict]) -> None:
+    """Plot the learning rate logged by the trainer against the optimizer step.
+
+    Args:
+        log_history: ``trainer.state.log_history``.
+
+    Raises:
+        RuntimeError: If the history contains no learning-rate logs.
+    """
+    logs = [entry for entry in log_history if "learning_rate" in entry and "step" in entry]
+    if not logs:
+        raise RuntimeError("Learning-rate logs are unavailable.")
+    _, axis = plt.subplots(figsize=(10, 4))
+    axis.plot(
+        [entry["step"] for entry in logs], [entry["learning_rate"] for entry in logs], color=TRAINING_COLOR, linewidth=2
+    )
+    axis.set_title("Learning-Rate Schedule", fontsize=14, fontweight="bold")
+    axis.set_xlabel("Optimizer step")
+    axis.set_ylabel("Learning rate")
+    axis.grid(True, linestyle="--", linewidth=0.7, alpha=0.55)
     plt.tight_layout()
     plt.show()
 

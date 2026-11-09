@@ -6,6 +6,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+
+* 2026-11-09: Replaced the ticket-classification datasets with the gold splits of the `llm-fine-tuning-on-aidp` project: `train_dataset_v2.jsonl` (980), `validation_dataset_v2.jsonl` (210), and `test_dataset_v2.jsonl` (210), split from one pool with stratification by category and severity, and without the 20 recurring context sentences that each signalled one severity. Removed the previous train, validation, and test files; the held-out test file is now `test_dataset_v2.jsonl`. Results recorded earlier are not comparable (specification 023).
+* 2026-11-09: Demo 06 trains for 5 epochs instead of 8, with a learning rate that warms up linearly over the first 10% of the optimizer steps and then decays along a cosine curve (`lr_scheduler_type`, `warmup_ratio`); it prints the step plan and plots the applied learning rate. The training data order also uses the run seed (`data_seed`). Demos 06 and 07 now use the short system prompt (variant B), as in the AI DP project.
+
 ### Added
 
 * 2026-10-26: Added the `llm_fine_tuning` package under `src/`, installable with `pip install --no-deps -e .`, with unit tests for dataset validation, prompts, scoring, training configuration, and dataset-shift measurements.

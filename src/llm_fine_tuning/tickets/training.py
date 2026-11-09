@@ -1,10 +1,12 @@
 """
 Author: L. Saetta
-Date last modified: 2026-10-26
+Date last modified: 2026-11-09
 License: MIT
-Description: Training settings, LoRA and SFT configuration, per-epoch validation metrics, and adapter saving.
+Description: Training settings, the learning-rate schedule plan, LoRA and SFT configuration, per-epoch validation
+metrics, and adapter saving.
 """
 
+import math
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -31,7 +33,10 @@ class TrainingSettings:
     Attributes:
         prompt_variant: ``'none'`` (A), ``'short'`` (B), or ``'full'`` (C); see ``ticket-classification/prompts``.
         num_train_epochs: Passes over the training split.
-        learning_rate: Peak AdamW learning rate.
+        learning_rate: Peak AdamW learning rate, reached at the end of the warmup.
+        lr_scheduler_type: Shape of the learning-rate decay after the warmup, for example ``'cosine'``.
+        warmup_ratio: Fraction of the total optimizer steps during which the learning rate rises linearly from 0 to
+            ``learning_rate``; must be in ``[0, 1)``.
         per_device_train_batch_size: Examples per forward pass (micro-batch).
         gradient_accumulation_steps: Micro-batches per optimizer step.
         per_device_eval_batch_size: Examples per forward pass for validation loss.
@@ -42,12 +47,17 @@ class TrainingSettings:
         lora_target_modules: Linear layers that receive LoRA adapters.
         generation_max_new_tokens: Maximum generated tokens per validation response.
         validation_generation_batch_size: Validation tickets generated per batch after every epoch.
-        seed: Random seed for reproducibility.
+        seed: Random seed for reproducibility; also the seed of the training-data order.
+
+    Raises:
+        ValueError: If ``warmup_ratio`` is outside ``[0, 1)``.
     """
 
     prompt_variant: str = "none"
-    num_train_epochs: int = 8
+    num_train_epochs: int = 5
     learning_rate: float = 1e-4
+    lr_scheduler_type: str = "cosine"
+    warmup_ratio: float = 0.10
     per_device_train_batch_size: int = 4
     gradient_accumulation_steps: int = 2
     per_device_eval_batch_size: int = 4
@@ -60,10 +70,45 @@ class TrainingSettings:
     validation_generation_batch_size: int = 4
     seed: int = 42
 
+    def __post_init__(self):
+        if not 0 <= self.warmup_ratio < 1:
+            raise ValueError(f"warmup_ratio must be in [0, 1), got {self.warmup_ratio!r}.")
+
     @property
     def effective_batch_size(self) -> int:
         """Examples per optimizer step."""
         return self.per_device_train_batch_size * self.gradient_accumulation_steps
+
+
+def learning_rate_schedule(num_train_examples: int, settings: TrainingSettings) -> dict:
+    """Return the optimizer-step plan of the learning-rate schedule, computed as the trainer computes it.
+
+    The formulas mirror ``Trainer.set_initial_training_values`` and ``TrainingArguments.get_warmup_steps`` of
+    Transformers for one device.
+
+    Args:
+        num_train_examples: Records in the training split.
+        settings: Training settings.
+
+    Returns:
+        Steps per epoch, total optimizer steps, warmup steps, and the schedule settings.
+
+    Raises:
+        ValueError: If the training split is empty.
+    """
+    if num_train_examples < 1:
+        raise ValueError("The training split is empty.")
+    batches_per_epoch = math.ceil(num_train_examples / settings.per_device_train_batch_size)
+    steps_per_epoch = max(math.ceil(batches_per_epoch / settings.gradient_accumulation_steps), 1)
+    total_steps = steps_per_epoch * settings.num_train_epochs
+    return {
+        "Scheduler": settings.lr_scheduler_type,
+        "Peak learning rate": settings.learning_rate,
+        "Warmup ratio": settings.warmup_ratio,
+        "Optimizer steps per epoch": steps_per_epoch,
+        "Total optimizer steps": total_steps,
+        "Warmup steps": math.ceil(total_steps * settings.warmup_ratio),
+    }
 
 
 def add_lora_adapter(model, settings: TrainingSettings):
@@ -105,6 +150,8 @@ def build_sft_config(output_directory: Path, settings: TrainingSettings) -> SFTC
     return SFTConfig(
         output_dir=str(output_directory),
         learning_rate=settings.learning_rate,
+        lr_scheduler_type=settings.lr_scheduler_type,
+        warmup_ratio=settings.warmup_ratio,
         num_train_epochs=settings.num_train_epochs,
         per_device_train_batch_size=settings.per_device_train_batch_size,
         per_device_eval_batch_size=settings.per_device_eval_batch_size,
@@ -126,6 +173,7 @@ def build_sft_config(output_directory: Path, settings: TrainingSettings) -> SFTC
         optim="adamw_torch",
         report_to="none",
         seed=settings.seed,
+        data_seed=settings.seed,
     )
 
 

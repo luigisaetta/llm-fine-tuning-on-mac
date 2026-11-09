@@ -6,7 +6,7 @@ IT-support tickets must be classified consistently into a predefined category an
 
 ## Scope
 
-Demo 06 is a restartable training notebook at `ticket-classification/demo06_ticket_classification_lora_fine_tuning.ipynb`. Demo 07 is a separate held-out evaluation notebook at `ticket-classification/demo07_ticket_classification_test_evaluation.ipynb`. Demo 08 is a deterministic dataset-shift analysis notebook at `ticket-classification/demo08_severity_dataset_shift_analysis.ipynb`. Demos 06 and 07 reuse the Qwen3-1.7B local model and the BF16 MPS LoRA approach of Demo 01. Since 2026-10-26 their implementation is in the `llm_fine_tuning.tickets` package ([specification 022](022-shared-package-and-didactic-notebooks.md)), and the default prompt variant is `'none'`.
+Demo 06 is a restartable training notebook at `ticket-classification/demo06_ticket_classification_lora_fine_tuning.ipynb`. Demo 07 is a separate held-out evaluation notebook at `ticket-classification/demo07_ticket_classification_test_evaluation.ipynb`. Demo 08 is a deterministic dataset-shift analysis notebook at `ticket-classification/demo08_severity_dataset_shift_analysis.ipynb`. Demos 06 and 07 reuse the Qwen3-1.7B local model and the BF16 MPS LoRA approach of Demo 01. Since 2026-10-26 their implementation is in the `llm_fine_tuning.tickets` package ([specification 022](022-shared-package-and-didactic-notebooks.md)), and the default prompt variant is `'none'` (`'short'` in the notebooks since 2026-11-09, specification 023).
 
 This specification covers dataset validation, prompt/completion formatting, per-epoch validation during training, held-out test evaluation after training, adapter artifacts, structured-output scoring, and deterministic severity dataset-shift analysis. It does not cover a production ticketing integration, API deployment, automatic remediation, or full-parameter fine-tuning.
 
@@ -16,9 +16,11 @@ The version-controlled synthetic datasets are:
 
 | Split | Path | Intended use | Records at specification time |
 | --- | --- | --- | ---: |
-| Training | `ticket-classification/artifacts/datasets/train_dataset_v2.jsonl` | Fit LoRA parameters. | 1,000 |
-| Validation | `ticket-classification/artifacts/datasets/validation_dataset_v2.jsonl` | Evaluate loss after every epoch and select the best checkpoint. | 200 |
-| Test | `ticket-classification/artifacts/datasets/test_dataset.jsonl` | One held-out, final evaluation after the best adapter is restored. | 200 |
+| Training | `ticket-classification/artifacts/datasets/train_dataset_v2.jsonl` | Fit LoRA parameters. | 980 |
+| Validation | `ticket-classification/artifacts/datasets/validation_dataset_v2.jsonl` | Evaluate loss after every epoch and select the best checkpoint. | 210 |
+| Test | `ticket-classification/artifacts/datasets/test_dataset_v2.jsonl` | One held-out, final evaluation after the best adapter is restored. | 210 |
+
+The counts and the test file name are those of 2026-11-09 ([specification 023](023-ticket-datasets-v2-and-learning-rate-schedule.md)); earlier they were 1,000/200/200 with `test_dataset.jsonl`. Results recorded in this specification before that date refer to the earlier datasets.
 
 Each JSONL record has a `messages` array with exactly a `user` ticket message followed by an `assistant` message. The assistant content must parse as one JSON object with exactly the keys `category`, `severity`, and `summary`. The notebook must reject empty ticket text, empty output values, invalid JSON, extra or missing keys, duplicate records within a split, and an exact ticket-text overlap between loaded splits.
 
@@ -70,7 +72,7 @@ For all label metrics, an invalid response counts as incorrect. Use deterministi
 
 ## Severity dataset-shift analysis contract
 
-Demo 08 loads only `validation_dataset_v2.jsonl` and `test_dataset.jsonl`; it must not load a model or modify either dataset. It validates the record schema and produces deterministic descriptive analyses of severity-label prevalence, exact cross-split ticket duplicates, ticket-length features, `P(severity | category)` differences, and severity-specific lexical cue overlap. It must show tables and useful Matplotlib visualizations, including severity distribution bars, ticket-length distributions, and a category-conditioned severity heatmap. Its final diagnostic summary may identify evidence consistent with dataset shift, but must clearly state that the analysis does not prove causality for a model-accuracy difference. No dataset text or calculated output may be stored in the committed notebook.
+Demo 08 loads only `validation_dataset_v2.jsonl` and `test_dataset_v2.jsonl`; it must not load a model or modify either dataset. It validates the record schema and produces deterministic descriptive analyses of severity-label prevalence, exact cross-split ticket duplicates, ticket-length features, `P(severity | category)` differences, and severity-specific lexical cue overlap. It must show tables and useful Matplotlib visualizations, including severity distribution bars, ticket-length distributions, and a category-conditioned severity heatmap. Its final diagnostic summary may identify evidence consistent with dataset shift, but must clearly state that the analysis does not prove causality for a model-accuracy difference. No dataset text or calculated output may be stored in the committed notebook.
 
 ## Acceptance criteria
 

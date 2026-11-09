@@ -62,7 +62,7 @@ Code cells must stay short (as a guideline, under about 15 lines, except the Set
 * Demo 06's severity confusion matrix reuses the batched generation of the per-epoch validation metric, instead of separate unbatched generation, so that the matrix and the reported severity accuracy come from the same predictions.
 * Demo 07 validates the test split with the same validation as the training splits (schema, allowed labels, no duplicate tickets). The current test split satisfies it.
 * The `'full'` prompt variant (C) becomes selectable. With the current `MAX_SEQUENCE_LENGTH` of 512, Demo 06 stops with the existing sequence-length error before training.
-* The default prompt variant of Demos 06 and 07 becomes `'none'` (A), following the conclusion recorded in [specification 021](021-ticket-classification-prompt-variant-b.md).
+* The default prompt variant of Demos 06 and 07 becomes `'none'` (A), following the conclusion recorded in [specification 021](021-ticket-classification-prompt-variant-b.md). Since 2026-11-09 the notebooks use `'short'` (B) instead ([specification 023](023-ticket-datasets-v2-and-learning-rate-schedule.md)).
 
 ## Acceptance criteria
 

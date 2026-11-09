@@ -5,7 +5,7 @@
 | Version | 1.0 |
 | Date | 2026-10-25 |
 | Status | Draft, retrofitted from past classifications; not yet human-reviewed |
-| Sources | `artifacts/datasets/train_dataset_v2.jsonl`, `validation_dataset_v2.jsonl`, `test_dataset.jsonl` |
+| Sources | The datasets of 2026-10 (`train_dataset_v2.jsonl`, `validation_dataset_v2.jsonl`, `test_dataset.jsonl`); the current datasets, imported on 2026-11-09 (specification 023), keep the same labels and expected outputs |
 | Specification | [019](../specs/019-ticket-classification-guide.md) |
 | Derived system prompts | [prompts/](prompts/README.md) ([specification 020](../specs/020-ticket-classification-system-prompt.md)) |
 

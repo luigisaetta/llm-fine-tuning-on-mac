@@ -38,6 +38,6 @@ The ticket-classification datasets were generated from category and severity rul
 
 Performed on 2026-10-25:
 
-* Rules were derived from `train_dataset_v2.jsonl` (1,000 records), `validation_dataset_v2.jsonl` (200), and `test_dataset.jsonl` (200), using keyword-by-category counts, severity-distinctive phrase counts, and a full read of the test split grouped by severity.
+* Rules were derived from the datasets of that time, `train_dataset_v2.jsonl` (1,000 records), `validation_dataset_v2.jsonl` (200), and `test_dataset.jsonl` (200), since replaced by specification 023, using keyword-by-category counts, severity-distinctive phrase counts, and a full read of the test split grouped by severity.
 * Training and validation follow a factorial design: each problem description is paired with an impact sentence from about five templates per severity, so severity there depends only on the impact sentence.
 * A manual sample check against the guide is recorded in the guide's known-inconsistencies section. No model was run and no automated audit was performed.

@@ -1,6 +1,6 @@
 """
 Author: L. Saetta
-Date last modified: 2026-10-26
+Date last modified: 2026-11-09
 License: MIT
 Description: Unit tests for ticket-classification data validation, prompts, scoring, training configuration, and
 dataset-shift measurements, using small in-memory fixtures and no model.
@@ -10,7 +10,9 @@ import json
 from pathlib import Path
 
 import pytest
+import torch
 from datasets import Dataset, DatasetDict
+from transformers import TrainingArguments, get_scheduler
 
 from llm_fine_tuning.tickets import training
 from llm_fine_tuning.tickets.data import TicketProjectPaths, reference_outputs, to_prompt_completion, validate_split
@@ -78,6 +80,7 @@ def test_ticket_project_paths(tmp_path) -> None:
     assert paths.model_directory == tmp_path.resolve() / "artifacts" / "models" / "Qwen3-1.7B"
     assert paths.train_file.name == "train_dataset_v2.jsonl"
     assert paths.test_file.parent == paths.dataset_directory
+    assert paths.test_file.name == "test_dataset_v2.jsonl"
 
 
 def test_prompt_construction_and_variants() -> None:
@@ -188,6 +191,36 @@ def test_sft_config_maps_settings_and_fixed_policy(monkeypatch, tmp_path) -> Non
     assert arguments["max_length"] == 512 and arguments["completion_only_loss"] is True
     assert arguments["metric_for_best_model"] == "eval_joint_accuracy" and arguments["load_best_model_at_end"] is True
     assert arguments["bf16"] is True and arguments["gradient_checkpointing"] is True and arguments["output_dir"] == str(tmp_path)
+    assert arguments["lr_scheduler_type"] == "cosine" and arguments["warmup_ratio"] == 0.10
+    assert arguments["seed"] == arguments["data_seed"] == 42
+
+
+def test_learning_rate_schedule_matches_the_trainer(tmp_path) -> None:
+    """The step plan agrees with Transformers, and the cosine scheduler peaks at the end of the warmup."""
+    settings = training.TrainingSettings()
+    plan = training.learning_rate_schedule(980, settings)
+    assert settings.num_train_epochs == 5 and settings.effective_batch_size == 8
+    assert plan["Optimizer steps per epoch"] == 123 and plan["Total optimizer steps"] == 615
+    arguments = TrainingArguments(output_dir=str(tmp_path), warmup_ratio=settings.warmup_ratio, report_to="none")
+    assert plan["Warmup steps"] == arguments.get_warmup_steps(615) == 62
+    optimizer = torch.optim.AdamW([torch.nn.Parameter(torch.zeros(1))], lr=settings.learning_rate)
+    scheduler = get_scheduler(settings.lr_scheduler_type, optimizer, num_warmup_steps=62, num_training_steps=615)
+    rates = []
+    for _ in range(615):
+        rates.append(scheduler.get_last_lr()[0])
+        optimizer.step()
+        scheduler.step()
+    assert rates[0] == 0.0 and max(rates) == pytest.approx(settings.learning_rate)
+    assert rates.index(max(rates)) == 62 and rates[-1] < settings.learning_rate * 0.01
+    with pytest.raises(ValueError, match="empty"):
+        training.learning_rate_schedule(0, settings)
+
+
+@pytest.mark.parametrize("ratio", [-0.1, 1.0, 1.5])
+def test_invalid_warmup_ratio_stops_before_training(ratio) -> None:
+    """A warmup ratio outside [0, 1) is rejected when the settings are created."""
+    with pytest.raises(ValueError, match="warmup_ratio"):
+        training.TrainingSettings(warmup_ratio=ratio)
 
 
 def shift_record(split: str, ticket: str, category: str, severity: str) -> dict:

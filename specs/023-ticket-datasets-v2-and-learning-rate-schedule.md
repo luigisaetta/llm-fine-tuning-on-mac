@@ -35,6 +35,7 @@ The training configuration also used a constant peak learning rate with the Tran
   * plot the logged learning rate in the review section;
   * set the default number of epochs to 5;
   * set `prompt_variant="short"` (variant B), the prompt used by the AI DP project, so that the results can be compared with it. Demo 07's `ADAPTER_PROMPT_VARIANT` becomes `"short"` to match. The package default of `TrainingSettings` stays `'none'`.
+* In Demo 07, measure the base model only with the adapter's prompt (amendment of 2026-11-09). The baseline without a system prompt (variant A), required by specification 021, is removed: it mostly measured the output format and overstated the gain of fine-tuning. Removing it also shortens the evaluation to two passes over the test split instead of three.
 * Update Demos 07 and 08, the tests, the README, the related specifications, and the changelog for the new file names, counts, and distributions.
 
 ## Non-goals
@@ -77,7 +78,8 @@ The learning rate rises linearly from 0 to `learning_rate` over `ceil(warmup_rat
 3. `TrainingSettings` rejects a `warmup_ratio` outside `[0, 1)`. `build_sft_config` passes the scheduler type, the warmup ratio, and `data_seed`.
 4. `learning_rate_schedule()` agrees with `TrainingArguments.get_warmup_steps`, and the real cosine scheduler peaks at the end of the warmup.
 5. Demo 06 uses the short prompt and 5 epochs, shows the schedule settings and the step plan, and plots the learning rate. Its saved outputs stay empty.
-6. The documentation and the specifications state the new counts and the provenance, and mark the earlier results as referring to the earlier data.
+6. Demo 07 evaluates the base model and the adapter once each, with the same system prompt, and reports their delta. Its saved outputs stay empty.
+7. The documentation and the specifications state the new counts and the provenance, and mark the earlier results as referring to the earlier data.
 
 ## Verification approach
 

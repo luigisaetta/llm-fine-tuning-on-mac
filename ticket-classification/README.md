@@ -72,7 +72,7 @@ The OCI AI Data Platform notebooks are in [ai-dp](ai-dp/). First run `inspect_lo
 
 ## Held-out test evaluation
 
-[Demo 07](demo07_ticket_classification_test_evaluation.ipynb) evaluates the original Qwen3-1.7B base model, without a system prompt and with the adapter's prompt variant, and the adapter saved by Demo 06 on the same `test_dataset_v2.jsonl` records. The delta compares the adapter with the base model given the same prompt. It presents Category Accuracy, Severity Accuracy, Category+Severity Accuracy, and Valid JSON Rate with the fine-tuned-minus-base delta, while a progress bar shows evaluation progress. Its final cell lets you choose one test-record index and visually compare the ticket, fine-tuned JSON response, and expected JSON. The test split is never used for training or checkpoint selection.
+[Demo 07](demo07_ticket_classification_test_evaluation.ipynb) evaluates the original Qwen3-1.7B base model and the adapter saved by Demo 06 on the same `test_dataset_v2.jsonl` records, both with the adapter's system prompt. The delta therefore measures the gain of fine-tuning, not of the prompt. It presents Category Accuracy, Severity Accuracy, Category+Severity Accuracy, and Valid JSON Rate with the fine-tuned-minus-base delta, while a progress bar shows evaluation progress. Its final cell lets you choose one test-record index and visually compare the ticket, fine-tuned JSON response, and expected JSON. The test split is never used for training or checkpoint selection.
 
 ## Severity dataset-shift analysis
 
